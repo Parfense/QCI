@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QCI Cloud — Автономный ретро-мессенджер (Без сервера)</title>
+    <!-- Подключаем бесплатный облачный клиент MQTT для связи между разными ПК без твоего сервера -->
+    <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
+    <style>
+        :root {
+            --bg-main: #22252a;
+            --bg-panel: #2c3038;
+            --bg-inset: #16181d;
+            --bg-hover: #26332e;
+            --bg-active: #1b4d3e;
+            --text-main: #d8dee9;
+            --text-muted: #8892b0;
+            --border-light: #434956;
+            --border-dark: #0f1115;
+            --title-grad-1: #134e4a;
+            --title-grad-2: #1e293b;
+            --nick-me: #38bdf8;
+            --nick-other: #4ade80;
+            --btn-bg: #323640;
+            --btn-text: #e2e8f0;
+        }
+
+        body.warm-theme {
+            --bg-main: #c8c4b8;
+            --bg-panel: #bab5a8;
+            --bg-inset: #e2dfd5;
+            --bg-hover: #d0dbce;
+            --bg-active: #2b4c3f;
+            --text-main: #1f2421;
+            --text-muted: #5a605d;
+            --border-light: #eae6dc;
+            --border-dark: #5c5952;
+            --title-grad-1: #1b4332;
+            --title-grad-2: #52796f;
+            --nick-me: #00509d;
+            --nick-other: #9b2226;
+            --btn-bg: #c8c4b8;
+            --btn-text: #1f2421;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Tahoma', 'Segoe UI', sans-serif; font-size: 13px; }
+        html, body { width: 100vw; height: 100vh; overflow: hidden; background-color: var(--bg-main); color: var(--text-main); user-select: none; }
+
+        .qci-window {
+            background-color: var(--bg-main);
+            border-top: 2px solid var(--border-light);
+            border-left: 2px solid var(--border-light);
+            border-right: 2px solid var(--border-dark);
+            border-bottom: 2px solid var(--border-dark);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .title-bar {
+            background: linear-gradient(90deg, var(--title-grad-1) 0%, var(--title-grad-2) 100%);
+            padding: 5px 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #ffffff;
+            font-weight: bold;
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--border-dark);
+        }
+        .title-bar-text { display: flex; align-items: center; gap: 6px; font-size: 12px; }
+        .title-bar-controls { display: flex; gap: 4px; align-items: center; }
+        .title-bar-controls button {
+            height: 18px; padding: 0 6px; font-size: 10px; font-weight: bold;
+            background: var(--btn-bg); color: var(--btn-text);
+            border-top: 1px solid var(--border-light); border-left: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-dark); border-bottom: 1px solid var(--border-dark);
+            cursor: pointer;
+        }
+
+        .window-body { padding: 8px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+        .flower-icon {
+            display: inline-block; width: 15px; height: 15px; flex-shrink: 0;
+            background-size: contain; background-repeat: no-repeat;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='6' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='25' cy='11' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='25' cy='21' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='16' cy='26' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='7' cy='21' r='5' fill='%23e74c3c' stroke='%23000' stroke-width='1.5'/><circle cx='7' cy='11' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='16' cy='16' r='4' fill='%23f1c40f' stroke='%23000' stroke-width='1.5'/></svg>");
+        }
+        .flower-icon.away { filter: hue-rotate(-40deg) saturate(1.5); }
+        .flower-icon.dnd { filter: hue-rotate(-110deg) saturate(2); }
+        .flower-icon.offline { filter: grayscale(100%); }
+
+        .win-btn {
+            background: var(--btn-bg); color: var(--btn-text);
+            border-top: 2px solid var(--border-light); border-left: 2px solid var(--border-light);
+            border-right: 2px solid var(--border-dark); border-bottom: 2px solid var(--border-dark);
+            padding: 6px 10px; cursor: pointer; font-weight: bold; font-size: 12px;
+        }
+        .win-btn:hover:not(:disabled) { filter: brightness(1.15); }
+        .win-btn:active:not(:disabled) {
+            border-top: 2px solid var(--border-dark); border-left: 2px solid var(--border-dark);
+            border-right: 2px solid var(--border-light); border-bottom: 2px solid var(--border-light);
+        }
+        .win-btn.accent-btn { background: #1b4d3e; color: #fff; }
+        .win-btn:disabled { opacity: 0.45; cursor: default; }
+
+        .inset-box {
+            background-color: var(--bg-inset); color: var(--text-main);
+            border-top: 2px solid var(--border-dark); border-left: 2px solid var(--border-dark);
+            border-right: 2px solid var(--border-light); border-bottom: 2px solid var(--border-light);
+        }
+
+        /* ЭКРАН ВХОДА И РЕГИСТРАЦИИ */
+        .auth-screen { width: 100vw; height: 100vh; background: #141619; display: flex; justify-content: center; align-items: center; }
+        .login-win { width: 390px; box-shadow: 0 12px 35px rgba(0,0,0,0.7); }
+        .qci-logo-banner { padding: 12px; display: flex; align-items: center; gap: 15px; margin-bottom: 10px; }
+        .big-flower {
+            width: 50px; height: 50px; background-size: contain; background-repeat: no-repeat;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='6' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='25' cy='11' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='25' cy='21' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='16' cy='26' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='7' cy='21' r='5' fill='%23e74c3c' stroke='%23000' stroke-width='1.5'/><circle cx='7' cy='11' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='16' cy='16' r='4' fill='%23f1c40f' stroke='%23000' stroke-width='1.5'/></svg>");
+        }
+        .qci-logo-banner h1 { font-size: 26px; color: #2ecc71; letter-spacing: 2px; }
+        .qci-logo-banner p { color: var(--text-muted); font-size: 11px; }
+
+        .auth-tabs { display: flex; gap: 4px; margin-bottom: 10px; }
+        .auth-tabs button { flex: 1; padding: 7px; }
+        .auth-tabs button.active-tab { background: #1b4d3e; color: #4ade80; border-top: 2px solid var(--border-dark); border-left: 2px solid var(--border-dark); }
+
+        .auth-form { display: flex; flex-direction: column; gap: 8px; }
+        .auth-form input { padding: 7px; outline: none; width: 100%; }
+        .auth-error { color: #f87171; font-size: 11px; min-height: 15px; font-weight: bold; }
+
+        /* ОСНОВНОЙ ЭКРАН (100% FULLSCREEN) */
+        .workspace-fullscreen { display: none; width: 100vw; height: 100vh; }
+        .chat-win { flex: 1; height: 100vh; }
+        .clist-win { width: 320px; height: 100vh; flex-shrink: 0; }
+
+        .my-info-bar { padding: 7px 8px; background: var(--bg-panel); border: 1px solid var(--border-dark); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
+        .cloud-status { font-size: 10px; padding: 2px 6px; border-radius: 3px; background: #064e3b; color: #34d399; }
+        .filter-input { width: 100%; padding: 6px 8px; margin-bottom: 6px; outline: none; }
+        .contact-list { flex: 1; overflow-y: auto; padding: 6px; margin-bottom: 6px; }
+        .group-title { font-weight: bold; color: #2ecc71; padding: 3px 2px; border-bottom: 1px dotted var(--border-light); margin-bottom: 6px; font-size: 12px; }
+        .contact-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 6px 8px; cursor: pointer; border: 1px solid transparent; margin-bottom: 2px;
+        }
+        .contact-item:hover { background: var(--bg-hover); border: 1px dotted #2ecc71; }
+        .contact-item.active { background: var(--bg-active); color: #ffffff; font-weight: bold; }
+        .contact-left { display: flex; align-items: center; gap: 7px; overflow: hidden; }
+        .unread-badge { background: #e11d48; color: #fff; font-size: 10px; font-weight: bold; padding: 1px 6px; border: 1px solid #000; }
+
+        .clist-bottom { display: flex; flex-direction: column; gap: 6px; }
+        .status-bar { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+        .status-bar select { flex: 1; padding: 4px; outline: none; font-size: 12px; }
+        .qci-brand { text-align: center; font-size: 11px; color: var(--text-muted); padding-top: 4px; border-top: 1px solid var(--border-light); }
+
+        .chat-user-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); border: 1px solid var(--border-dark); padding: 6px 10px; margin-bottom: 6px; }
+        .chat-user-actions { display: flex; gap: 6px; }
+        .messages-area { flex: 1; padding: 12px; overflow-y: auto; margin-bottom: 6px; user-select: text; }
+        .empty-chat-notice { color: var(--text-muted); text-align: center; margin-top: 16%; font-size: 13px; line-height: 1.6; }
+        .msg-row { margin-bottom: 8px; line-height: 1.45; border-bottom: 1px dashed var(--border-light); padding: 4px 6px 6px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+        .msg-content-block { flex: 1; }
+        .msg-header-me { color: var(--nick-me); font-weight: bold; font-size: 12px; }
+        .msg-header-other { color: var(--nick-other); font-weight: bold; font-size: 12px; }
+        .msg-text { color: var(--text-main); padding-left: 4px; word-wrap: break-word; font-size: 13.5px; margin-top: 3px; }
+
+        .del-msg-btn {
+            background: var(--btn-bg); color: #f87171;
+            border-top: 1px solid var(--border-light); border-left: 1px solid var(--border-light);
+            border-right: 1px solid var(--border-dark); border-bottom: 1px solid var(--border-dark);
+            font-size: 10px; font-weight: bold; padding: 1px 6px; cursor: pointer;
+        }
+        .del-msg-btn:hover { background: #7f1d1d; color: #fff; }
+
+        .chat-toolbar { display: flex; align-items: center; gap: 6px; padding: 4px 6px; background: var(--bg-panel); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-dark); margin-bottom: 6px; }
+        .smiley { cursor: pointer; font-size: 15px; padding: 1px 4px; }
+        .sound-toggle { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 11px; cursor: pointer; font-weight: bold; }
+        #msgInput { height: 85px; width: 100%; resize: none; padding: 8px 10px; margin-bottom: 6px; font-size: 13.5px; outline: none; }
+        .chat-footer { display: flex; justify-content: space-between; align-items: center; }
+        .hotkey-hint { color: var(--text-muted); font-size: 11px; }
+
+        /* МОДАЛКА ПОИСКА ДРУЗЕЙ */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: none; justify-content: center; align-items: center; z-index: 100; }
+        .modal-overlay.open { display: flex; }
+        .find-win { width: 460px; height: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        .find-search-bar { display: flex; gap: 6px; margin-bottom: 8px; }
+        .find-search-bar input { flex: 1; padding: 6px 8px; outline: none; }
+        .find-results { flex: 1; overflow-y: auto; padding: 6px; margin-bottom: 8px; }
+        .found-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px dotted var(--border-light); }
+    </style>
+</head>
+<body>
+
+<!-- 1. ОКНО ВХОДА И РЕГИСТРАЦИИ -->
+<div class="auth-screen" id="authScreen">
+    <div class="qci-window login-win">
+        <div class="title-bar">
+            <div class="title-bar-text">
+                <span class="flower-icon"></span> QCI Cloud — Вход / Регистрация
+            </div>
+            <div class="title-bar-controls">
+                <button onclick="toggleTheme()">🌙/☀️</button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="qci-logo-banner inset-box">
+                <div class="big-flower"></div>
+                <div>
+                    <h1>QCI Cloud</h1>
+                    <p>Работает между ПК без твоего сервера!</p>
+                </div>
+            </div>
+
+            <!-- Переключатель Вход / Регистрация -->
+            <div class="auth-tabs">
+                <button class="win-btn active-tab" id="tabLoginBtn" onclick="switchAuthTab('login')">🔑 Войти</button>
+                <button class="win-btn" id="tabRegBtn" onclick="switchAuthTab('register')">📝 Зарегистрироваться</button>
+            </div>
+
+            <div class="auth-error" id="authError"></div>
+
+            <!-- Форма Входа -->
+            <div class="auth-form" id="loginForm">
+                <label><b>Ваш Никнейм или номер UIN:</b></label>
+                <input type="text" id="loginId" class="inset-box" placeholder="Введите ваш UIN или Ник">
+                <label><b>Пароль:</b></label>
+                <input type="password" id="loginPass" class="inset-box" placeholder="Введите пароль">
+                <button class="win-btn accent-btn" onclick="handleLogin()" style="margin-top:6px;">Войти в QCI</button>
+            </div>
+
+            <!-- Форма Регистрации -->
+            <div class="auth-form" id="regForm" style="display: none;">
+                <label><b>Придумайте Никнейм:</b></label>
+                <input type="text" id="regNick" class="inset-box" placeholder="Например: Снайпер_2026">
+                <label><b>Придумайте Пароль:</b></label>
+                <input type="password" id="regPass" class="inset-box" placeholder="Минимум 3 символа">
+                <label><b>Повторите Пароль:</b></label>
+                <input type="password" id="regPass2" class="inset-box" placeholder="Повторите пароль">
+                <button class="win-btn accent-btn" onclick="handleRegister()" style="margin-top:6px;">✨ Создать аккаунт и получить UIN</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 2. ГЛАВНЫЙ ЭКРАН МЕССЕНДЖЕРА (100% FULLSCREEN) -->
+<div class="workspace-fullscreen" id="appScreen">
+
+    <!-- ОКНО ЧАТА -->
+    <div class="qci-window chat-win">
+        <div class="title-bar">
+            <div class="title-bar-text" id="chatTitle">
+                <span class="flower-icon online"></span> QCI Cloud Session — Выберите чат
+            </div>
+            <div class="title-bar-controls">
+                <button onclick="toggleTheme()">🌙 Тема</button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="chat-user-bar">
+                <div>
+                    <strong>Кому:</strong> <span id="targetNick">Выберите контакт справа 👉</span>
+                    &nbsp;|&nbsp; <strong>UIN#:</strong> <span id="targetUin">---</span>
+                </div>
+                <div class="chat-user-actions">
+                    <button class="win-btn" id="clearChatBtn" onclick="clearChat()" disabled>🧹 Очистить лог</button>
+                    <button class="win-btn" id="removeFriendBtn" onclick="removeFriend()" disabled>❌ Удалить контакт</button>
+                </div>
+            </div>
+
+            <div class="messages-area inset-box" id="messagesArea">
+                <div class="empty-chat-notice">
+                    🌐 <b>Облачный режим QCI активирован!</b><br>
+                    Этот файл работает вообще без Python-сервера.<br>
+                    Отправьте файл <b>index.html</b> другу или откройте его в другом браузере,<br>
+                    зарегистрируйтесь и найдите друг друга по UIN через <b>«🔍 Найти друзей»</b>!
+                </div>
+            </div>
+
+            <div class="chat-toolbar">
+                <span class="smiley" onclick="insertSmiley('😊')">😊</span>
+                <span class="smiley" onclick="insertSmiley('😉')">😉</span>
+                <span class="smiley" onclick="insertSmiley('😄')">😄</span>
+                <span class="smiley" onclick="insertSmiley('😎')">😎</span>
+                <span class="smiley" onclick="insertSmiley('🤣')">🤣</span>
+                <span class="smiley" onclick="insertSmiley('❤️')">❤️</span>
+                <span class="smiley" onclick="insertSmiley('🔥')">🔥</span>
+                <span class="smiley" onclick="insertSmiley('🌹')">🌹</span>
+                <label class="sound-toggle">
+                    <input type="checkbox" id="soundCheck" checked> 🔊 Звуки QCI
+                </label>
+            </div>
+
+            <textarea id="msgInput" class="inset-box" placeholder="Введите сообщение... (Enter — отправить)" disabled></textarea>
+
+            <div class="chat-footer">
+                <div class="hotkey-hint">Отправка: <b>Enter</b> | Удаление: <b>[x]</b> | Связь через глобальный облачный ретранслятор</div>
+                <button class="win-btn accent-btn" onclick="sendMessage()" id="sendBtn" disabled>Отправить (Send)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- КОНТАКТ-ЛИСТ -->
+    <div class="qci-window clist-win">
+        <div class="title-bar">
+            <div class="title-bar-text" id="myTitleBar">
+                <span class="flower-icon online"></span> QCI
+            </div>
+            <div class="title-bar-controls">
+                <button onclick="logout()">Выйти X</button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div class="my-info-bar">
+                <div style="display:flex; align-items:center; gap:6px;">
+                    <span class="flower-icon online" id="myFlower"></span>
+                    <strong id="myNickDisplay">User</strong> <small id="myUinDisplay" style="color:var(--text-muted)"></small>
+                </div>
+                <span class="cloud-status" id="cloudIndicator">☁️ Online</span>
+            </div>
+
+            <input type="text" class="filter-input inset-box" id="localFilter" placeholder="🔍 Фильтр по моим друзьям..." oninput="renderContacts()">
+
+            <div class="contact-list inset-box">
+                <div class="group-title">▼ Контакты (Cloud & Bots)</div>
+                <div id="onlineContacts"></div>
+            </div>
+
+            <div class="clist-bottom">
+                <button class="win-btn accent-btn" onclick="openFriendsModal()">🔍 Найти друзей (По UIN / Нику)</button>
+                <button class="win-btn" onclick="playSound('uhoh')">🎵 Тест звука «О-оу!»</button>
+                <div class="status-bar">
+                    <span><b>Статус:</b></span>
+                    <select id="statusSelect" class="inset-box" onchange="changeMyStatus(this.value)">
+                        <option value="online">🟢 В сети (Online)</option>
+                        <option value="away">🟡 Отошёл (Away)</option>
+                        <option value="dnd">🔴 Занят (DND)</option>
+                        <option value="offline">⚪ Невидимый (Offline)</option>
+                    </select>
+                </div>
+                <div class="qci-brand">QCI Serverless • Cloud P2P</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- 3. МОДАЛКА ПОИСКА И ДОБАВЛЕНИЯ ДРУЗЕЙ -->
+<div class="modal-overlay" id="friendsModal">
+    <div class="qci-window find-win">
+        <div class="title-bar">
+            <div class="title-bar-text">
+                <span class="flower-icon"></span> Глобальный поиск друзей QCI
+            </div>
+            <div class="title-bar-controls">
+                <button onclick="closeFriendsModal()">X</button>
+            </div>
+        </div>
+        <div class="window-body">
+            <div style="margin-bottom:6px; font-size:11px; color:var(--text-muted);">
+                Вы можете выбрать человека из списка онлайн или ввести <b>точный UIN друга</b>, чтобы добавить его напрямую:
+            </div>
+            <div class="find-search-bar">
+                <input type="text" id="globalSearchInput" class="inset-box" placeholder="Введите Ник или 6-значный UIN друга..." oninput="renderGlobalUsers()">
+                <button class="win-btn accent-btn" onclick="addByExactUin()">+ По UIN</button>
+            </div>
+            <div class="find-results inset-box" id="globalResults"></div>
+            <div style="text-align: right;">
+                <button class="win-btn" onclick="closeFriendsModal()">Закрыть окно</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// =====================================================================
+// ЛОКАЛЬНАЯ БАЗА + ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ ЧЕРЕЗ ПУБЛИЧНЫЙ БРОКЕР EMQX
+// =====================================================================
+const DEFAULT_USERS = {
+    "000000": { uin: "000000", nickname: "🌐 Общий_Зал_QCI (Все)", status: "online", isBot: false, isRoom: true },
+    "100001": { uin: "100001", nickname: "КиберПанк_2003 (Бот)", status: "online", isBot: true },
+    "404999": { uin: "404999", nickname: "Агент_Матрицы (Бот)", status: "away", isBot: true },
+    "777888": { uin: "777888", nickname: "Хакерша_Кэт (Бот)", status: "online", isBot: true }
+};
+
+const BOT_REPLIES = [
+    "О-оу! Теперь QCI работает вообще без Python-сервера через облачный ретранслятор! 8-)",
+    "Ты можешь скинуть этот файл index.html другу, и вы сможете переписываться с разных компов!",
+    "Попробуй написать в «🌐 Общий_Зал_QCI» — его видят все пользователи онлайн!",
+    "Лови розу в чат: @}->--"
+];
+
+let currentUser = null;
+let activeTargetUin = null;
+let mqttClient = null;
+const TOPIC_PREFIX = "qci_retro_global_v2/";
+
+// Загрузка данных из памяти браузера
+function getAccounts() { return JSON.parse(localStorage.getItem('qci_accounts') || '{}'); }
+function saveAccounts(acc) { localStorage.setItem('qci_accounts', JSON.stringify(acc)); }
+
+function getKnownUsers() {
+    const saved = JSON.parse(localStorage.getItem('qci_known_users') || '{}');
+    return { ...DEFAULT_USERS, ...saved };
+}
+function saveKnownUser(u) {
+    const saved = JSON.parse(localStorage.getItem('qci_known_users') || '{}');
+    saved[u.uin] = u;
+    localStorage.setItem('qci_known_users', JSON.stringify(saved));
+}
+
+function getMyFriends() {
+    if (!currentUser) return [];
+    const key = 'qci_friends_' + currentUser.uin;
+    let list = JSON.parse(localStorage.getItem(key) || 'null');
+    if (!list) {
+        list = ["000000", "100001"];
+        localStorage.setItem(key, JSON.stringify(list));
+    }
+    return list;
+}
+function saveMyFriends(list) {
+    localStorage.setItem('qci_friends_' + currentUser.uin, JSON.stringify(list));
+}
+
+function getMessages() {
+    return JSON.parse(localStorage.getItem('qci_messages_v2') || '[]');
+}
+function saveMessages(msgs) {
+    localStorage.setItem('qci_messages_v2', JSON.stringify(msgs));
+}
+
+// ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ВХОД / РЕГИСТРАЦИЯ
+function switchAuthTab(mode) {
+    document.getElementById('authError').innerText = '';
+    if (mode === 'login') {
+        document.getElementById('loginForm').style.display = 'flex';
+        document.getElementById('regForm').style.display = 'none';
+        document.getElementById('tabLoginBtn').classList.add('active-tab');
+        document.getElementById('tabRegBtn').classList.remove('active-tab');
+    } else {
+        document.getElementById('loginForm').style.display = 'none';
+        document.getElementById('regForm').style.display = 'flex';
+        document.getElementById('tabLoginBtn').classList.remove('active-tab');
+        document.getElementById('tabRegBtn').classList.add('active-tab');
+    }
+}
+
+// РЕГИСТРАЦИЯ НОВОГО АККАУНТА
+function handleRegister() {
+    const nick = document.getElementById('regNick').value.trim();
+    const pass = document.getElementById('regPass').value.trim();
+    const pass2 = document.getElementById('regPass2').value.trim();
+    const err = document.getElementById('authError');
+
+    if (nick.length < 2) { err.innerText = '❌ Введите никнейм (минимум 2 символа)!'; return; }
+    if (pass.length < 3) { err.innerText = '❌ Пароль должен быть не короче 3 символов!'; return; }
+    if (pass !== pass2) { err.innerText = '❌ Пароли не совпадают!'; return; }
+
+    const accounts = getAccounts();
+    for (const u of Object.values(accounts)) {
+        if (u.nickname.toLowerCase() === nick.toLowerCase()) {
+            err.innerText = '❌ Этот никнейм уже занят, выберите другой или войдите!';
+            return;
+        }
+    }
+
+    const newUin = String(Math.floor(200000 + Math.random() * 799999));
+    const newUser = { uin: newUin, nickname: nick, password: pass, status: 'online' };
+    accounts[newUin] = newUser;
+    saveAccounts(accounts);
+    saveKnownUser({ uin: newUin, nickname: nick, status: 'online' });
+
+    // Приветственное сообщение новому пользователю
+    const msgs = getMessages();
+    msgs.push({
+        id: Date.now(),
+        sender_uin: "100001",
+        sender_nick: "КиберПанк_2003 (Бот)",
+        receiver_uin: newUin,
+        content: `Поздравляю с регистрацией в QCI Cloud, ${nick}! Твой личный номер UIN: ${newUin}. Теперь ты можешь общаться без сервера! :-)`,
+        timestamp: new Date().toLocaleTimeString().slice(0,5)
+    });
+    saveMessages(msgs);
+
+    loginSuccess(newUser);
+}
+
+// ВХОД В АККАУНТ
+function handleLogin() {
+    const id = document.getElementById('loginId').value.trim();
+    const pass = document.getElementById('loginPass').value.trim();
+    const err = document.getElementById('authError');
+
+    const accounts = getAccounts();
+    let found = null;
+    for (const u of Object.values(accounts)) {
+        if (u.uin === id || u.nickname.toLowerCase() === id.toLowerCase()) {
+            found = u;
+            break;
+        }
+    }
+
+    if (!found) {
+        err.innerText = '❌ Аккаунт не найден! Нажмите вкладку «📝 Зарегистрироваться» выше.';
+        return;
+    }
+    if (found.password !== pass) {
+        err.innerText = '❌ Неверный пароль!';
+        return;
+    }
+
+    loginSuccess(found);
+}
+
+function loginSuccess(user) {
+    currentUser = user;
+    sessionStorage.setItem('qci_active_user', JSON.stringify(user));
+
+    document.getElementById('authScreen').style.display = 'none';
+    document.getElementById('appScreen').style.display = 'flex';
+    document.getElementById('myNickDisplay').innerText = user.nickname;
+    document.getElementById('myUinDisplay').innerText = `(#${user.uin})`;
+    document.getElementById('myTitleBar').innerHTML = `<span class="flower-icon online"></span> QCI ${user.uin} - ${user.nickname}`;
+
+    playSound('horn');
+    renderContacts();
+    connectCloudBroker();
+}
+
+function logout() {
+    sessionStorage.removeItem('qci_active_user');
+    location.reload();
+}
+
+// ОБЛАЧНАЯ СВЯЗЬ БЕЗ СЕРВЕРА (ЧЕРЕЗ WSS ПУБЛИЧНЫЙ БРОКЕР)
+function connectCloudBroker() {
+    if (typeof mqtt === 'undefined') return;
+    const ind = document.getElementById('cloudIndicator');
+    ind.innerText = '☁️ Подключение...';
+
+    mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
+
+    mqttClient.on('connect', () => {
+        ind.innerText = '☁️ Cloud Online';
+        mqttClient.subscribe(TOPIC_PREFIX + 'presence');
+        mqttClient.subscribe(TOPIC_PREFIX + 'msg/' + currentUser.uin);
+        mqttClient.subscribe(TOPIC_PREFIX + 'msg/000000');
+
+        // Объявляем всем в облаке, что мы онлайн
+        announcePresence();
+        setInterval(announcePresence, 8000);
+    });
+
+    mqttClient.on('message', (topic, payload) => {
+        try {
+            const data = JSON.parse(payload.toString());
+            if (topic.endsWith('/presence')) {
+                if (data.uin && data.uin !== currentUser.uin) {
+                    saveKnownUser({ uin: data.uin, nickname: data.nickname, status: data.status });
+                    renderContacts();
+                }
+            } else if (topic.includes('/msg/')) {
+                if (data.sender_uin === currentUser.uin) return;
+                saveKnownUser({ uin: data.sender_uin, nickname: data.sender_nick, status: 'online' });
+
+                // Если нам написал новый человек — автоматически добавляем его в список контактов
+                const friends = getMyFriends();
+                if (data.receiver_uin === currentUser.uin && !friends.includes(data.sender_uin)) {
+                    friends.push(data.sender_uin);
+                    saveMyFriends(friends);
+                }
+
+                const msgs = getMessages();
+                msgs.push(data);
+                saveMessages(msgs);
+
+                playSound('uhoh');
+                renderContacts();
+                if (activeTargetUin === data.sender_uin || (data.receiver_uin === '000000' && activeTargetUin === '000000')) {
+                    renderMessages();
+                }
+            }
+        } catch (e) {}
+    });
+}
+
+function announcePresence() {
+    if (mqttClient && mqttClient.connected && currentUser) {
+        mqttClient.publish(TOPIC_PREFIX + 'presence', JSON.stringify({
+            uin: currentUser.uin,
+            nickname: currentUser.nickname,
+            status: currentUser.status || 'online'
+        }));
+    }
+}
+
+// ОТРИСОВКА КОНТАКТОВ И СООБЩЕНИЙ
+function renderContacts() {
+    const filter = (document.getElementById('localFilter')?.value || '').toLowerCase();
+    const container = document.getElementById('onlineContacts');
+    container.innerHTML = '';
+
+    const known = getKnownUsers();
+    const friends = getMyFriends();
+
+    friends.forEach(uin => {
+        const u = known[uin] || { uin, nickname: `Контакт #${uin}`, status: 'online' };
+        if (filter && !u.nickname.toLowerCase().includes(filter) && !u.uin.includes(filter)) return;
+
+        const div = document.createElement('div');
+        div.className = 'contact-item' + (activeTargetUin === u.uin ? ' active' : '');
+        div.onclick = () => selectContact(u.uin);
+        div.innerHTML = `
+            <div class="contact-left">
+                <span class="flower-icon ${u.status}"></span>
+                <span>${u.nickname} <small style="opacity:0.65;">(${u.uin})</small></span>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+function selectContact(uin) {
+    activeTargetUin = uin;
+    const u = getKnownUsers()[uin] || { uin, nickname: `Контакт #${uin}`, status: 'online' };
+
+    document.getElementById('targetNick').innerText = u.nickname;
+    document.getElementById('targetUin').innerText = u.uin;
+    document.getElementById('chatTitle').innerHTML = `<span class="flower-icon ${u.status}"></span> QCI Cloud — ${u.nickname} (${u.uin})`;
+
+    const msgInput = document.getElementById('msgInput');
+    msgInput.disabled = false;
+    document.getElementById('sendBtn').disabled = false;
+    document.getElementById('clearChatBtn').disabled = false;
+    document.getElementById('removeFriendBtn').disabled = (uin === '000000');
+    msgInput.focus();
+
+    renderContacts();
+    renderMessages();
+}
+
+function renderMessages() {
+    if (!activeTargetUin) return;
+    const area = document.getElementById('messagesArea');
+    const all = getMessages();
+
+    const chatMsgs = all.filter(m => {
+        if (activeTargetUin === '000000') return m.receiver_uin === '000000';
+        return (m.sender_uin === currentUser.uin && m.receiver_uin === activeTargetUin) ||
+               (m.sender_uin === activeTargetUin && m.receiver_uin === currentUser.uin);
+    });
+
+    if (chatMsgs.length === 0) {
+        area.innerHTML = '<div class="empty-chat-notice">Сообщений пока нет. Напишите первым! 👋</div>';
+        return;
+    }
+
+    area.innerHTML = chatMsgs.map(m => {
+        const isMe = m.sender_uin === currentUser.uin;
+        return `
+            <div class="msg-row">
+                <div class="msg-content-block">
+                    <div class="${isMe ? 'msg-header-me' : 'msg-header-other'}">
+                        ${m.sender_nick} [${m.timestamp}]:
+                    </div>
+                    <div class="msg-text">${m.content}</div>
+                </div>
+                <button class="del-msg-btn" onclick="deleteSingleMessage(${m.id})" title="Удалить сообщение">[x]</button>
+            </div>
+        `;
+    }).join('');
+    area.scrollTop = area.scrollHeight;
+}
+
+function sendMessage() {
+    const input = document.getElementById('msgInput');
+    const text = input.value.trim();
+    if (!text || !activeTargetUin) return;
+    input.value = '';
+
+    const msgObj = {
+        id: Date.now() + Math.floor(Math.random() * 1000),
+        sender_uin: currentUser.uin,
+        sender_nick: currentUser.nickname,
+        receiver_uin: activeTargetUin,
+        content: text,
+        timestamp: new Date().toLocaleTimeString().slice(0,5)
+    };
+
+    const msgs = getMessages();
+    msgs.push(msgObj);
+    saveMessages(msgs);
+    renderMessages();
+
+    // Отправляем через облако реальному собеседнику или в Общий Зал
+    if (mqttClient && mqttClient.connected) {
+        mqttClient.publish(TOPIC_PREFIX + 'msg/' + activeTargetUin, JSON.stringify(msgObj));
+    }
+
+    // Если пишем боту — он отвечает через 0.6 сек
+    const targetUser = getKnownUsers()[activeTargetUin];
+    if (targetUser && targetUser.isBot) {
+        setTimeout(() => {
+            const reply = BOT_REPLIES[Math.floor(Math.random() * BOT_REPLIES.length)];
+            const botMsg = {
+                id: Date.now() + 1,
+                sender_uin: activeTargetUin,
+                sender_nick: targetUser.nickname,
+                receiver_uin: currentUser.uin,
+                content: reply,
+                timestamp: new Date().toLocaleTimeString().slice(0,5)
+            };
+            const updated = getMessages();
+            updated.push(botMsg);
+            saveMessages(updated);
+            playSound('uhoh');
+            if (activeTargetUin === targetUser.uin) renderMessages();
+        }, 600);
+    }
+}
+
+function deleteSingleMessage(id) {
+    const msgs = getMessages().filter(m => m.id !== id);
+    saveMessages(msgs);
+    renderMessages();
+}
+
+function clearChat() {
+    if (!activeTargetUin) return;
+    const msgs = getMessages().filter(m => {
+        if (activeTargetUin === '000000') return m.receiver_uin !== '000000';
+        const isThisChat = (m.sender_uin === currentUser.uin && m.receiver_uin === activeTargetUin) ||
+                           (m.sender_uin === activeTargetUin && m.receiver_uin === currentUser.uin);
+        return !isThisChat;
+    });
+    saveMessages(msgs);
+    renderMessages();
+}
+
+// ПОИСК И ДОБАВЛЕНИЕ ДРУЗЕЙ
+function openFriendsModal() {
+    document.getElementById('friendsModal').classList.add('open');
+    document.getElementById('globalSearchInput').value = '';
+    renderGlobalUsers();
+}
+function closeFriendsModal() {
+    document.getElementById('friendsModal').classList.remove('open');
+}
+
+function renderGlobalUsers() {
+    const q = document.getElementById('globalSearchInput').value.trim().toLowerCase();
+    const known = getKnownUsers();
+    const friends = getMyFriends();
+    const box = document.getElementById('globalResults');
+
+    const list = Object.values(known).filter(u =>
+        u.uin !== currentUser.uin && (!q || u.nickname.toLowerCase().includes(q) || u.uin.includes(q))
+    );
+
+    if (list.length === 0) {
+        box.innerHTML = '<div style="padding:10px; color:var(--text-muted);">В списке никого не найдено. Если вы знаете UIN друга — нажмите кнопку <b>«+ По UIN»</b> справа от поиска!</div>';
+        return;
+    }
+
+    box.innerHTML = list.map(u => `
+        <div class="found-row">
+            <div style="display:flex; align-items:center; gap:7px;">
+                <span class="flower-icon ${u.status}"></span>
+                <b>${u.nickname}</b> <span style="color:var(--text-muted)">(UIN: ${u.uin})</span>
+            </div>
+            ${friends.includes(u.uin)
+                ? `<button class="win-btn" disabled>✓ В друзьях</button>`
+                : `<button class="win-btn accent-btn" onclick="addFriend('${u.uin}')">+ Добавить</button>`
+            }
+        </div>
+    `).join('');
+}
+
+function addFriend(uin) {
+    const friends = getMyFriends();
+    if (!friends.includes(uin)) {
+        friends.push(uin);
+        saveMyFriends(friends);
+    }
+    renderGlobalUsers();
+    renderContacts();
+}
+
+function addByExactUin() {
+    const val = document.getElementById('globalSearchInput').value.trim();
+    if (!val) return;
+    const known = getKnownUsers();
+    if (!known[val]) {
+        saveKnownUser({ uin: val, nickname: `Игрок #${val}`, status: 'online' });
+    }
+    addFriend(val);
+    closeFriendsModal();
+    selectContact(val);
+}
+
+function removeFriend() {
+    if (!activeTargetUin || activeTargetUin === '000000') return;
+    const friends = getMyFriends().filter(id => id !== activeTargetUin);
+    saveMyFriends(friends);
+    activeTargetUin = null;
+    document.getElementById('msgInput').disabled = true;
+    document.getElementById('sendBtn').disabled = true;
+    renderContacts();
+    document.getElementById('messagesArea').innerHTML = '<div class="empty-chat-notice">Контакт удален из списка друзей.</div>';
+}
+
+function changeMyStatus(st) {
+    currentUser.status = st;
+    document.getElementById('myFlower').className = 'flower-icon ' + st;
+    announcePresence();
+}
+
+function toggleTheme() {
+    document.body.classList.toggle('warm-theme');
+}
+
+function insertSmiley(s) {
+    const inp = document.getElementById('msgInput');
+    if (!inp.disabled) { inp.value += ' ' + s + ' '; inp.focus(); }
+}
+
+// Звуковой движок QCI
+const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+function playSound(type) {
+    const soundCheck = document.getElementById('soundCheck');
+    if (soundCheck && !soundCheck.checked) return;
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const now = audioCtx.currentTime;
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    if (type === 'uhoh') {
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(520, now);
+        osc.frequency.exponentialRampToValueAtTime(580, now + 0.12);
+        osc.frequency.setValueAtTime(420, now + 0.18);
+        osc.frequency.exponentialRampToValueAtTime(310, now + 0.45);
+        gain.gain.setValueAtTime(0.35, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.48);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + 0.5);
+    } else if (type === 'type') {
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(850, now);
+        gain.gain.setValueAtTime(0.025, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.025);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + 0.03);
+    } else if (type === 'horn') {
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, now);
+        osc.frequency.linearRampToValueAtTime(135, now + 0.6);
+        gain.gain.setValueAtTime(0.12, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.65);
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        osc.start(now); osc.stop(now + 0.7);
+    }
+}
+
+document.getElementById('msgInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+    else playSound('type');
+});
+
+// Автовход, если сессия уже открыта
+window.onload = () => {
+    const saved = sessionStorage.getItem('qci_active_user');
+    if (saved) loginSuccess(JSON.parse(saved));
+};
+</script>
+</body>
+</html>
