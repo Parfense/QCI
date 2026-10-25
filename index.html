@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QCI Cloud — Автономный ретро-мессенджер (Без сервера)</title>
-    <!-- Подключаем бесплатный облачный клиент MQTT для связи между разными ПК без твоего сервера -->
+    <title>QCI Cloud — Groups, Roles & PNG Edition</title>
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
     <style>
         :root {
@@ -92,7 +91,8 @@
             background: var(--btn-bg); color: var(--btn-text);
             border-top: 2px solid var(--border-light); border-left: 2px solid var(--border-light);
             border-right: 2px solid var(--border-dark); border-bottom: 2px solid var(--border-dark);
-            padding: 6px 10px; cursor: pointer; font-weight: bold; font-size: 12px;
+            padding: 5px 10px; cursor: pointer; font-weight: bold; font-size: 11.5px;
+            display: inline-flex; align-items: center; justify-content: center; gap: 5px;
         }
         .win-btn:hover:not(:disabled) { filter: brightness(1.15); }
         .win-btn:active:not(:disabled) {
@@ -100,6 +100,7 @@
             border-right: 2px solid var(--border-light); border-bottom: 2px solid var(--border-light);
         }
         .win-btn.accent-btn { background: #1b4d3e; color: #fff; }
+        .win-btn.danger-btn { background: #5c1d24; color: #fecdd3; }
         .win-btn:disabled { opacity: 0.45; cursor: default; }
 
         .inset-box {
@@ -107,6 +108,18 @@
             border-top: 2px solid var(--border-dark); border-left: 2px solid var(--border-dark);
             border-right: 2px solid var(--border-light); border-bottom: 2px solid var(--border-light);
         }
+
+        /* PNG смайлы и иконки */
+        .png-smiley { width: 20px; height: 20px; vertical-align: middle; margin: 0 2px; image-rendering: auto; }
+        .toolbar-smiley { width: 22px; height: 22px; cursor: pointer; padding: 1px; border: 1px solid transparent; }
+        .toolbar-smiley:hover { border: 1px solid var(--border-light); background: var(--bg-inset); transform: scale(1.1); }
+        .role-badge {
+            font-size: 10px; padding: 1px 5px; border-radius: 3px; font-weight: bold; margin-left: 4px;
+            border: 1px solid rgba(0,0,0,0.4);
+        }
+        .role-owner { background: #b45309; color: #fef3c7; }
+        .role-admin { background: #1d4ed8; color: #dbeafe; }
+        .role-member { background: #374151; color: #d1d5db; }
 
         /* ЭКРАН ВХОДА И РЕГИСТРАЦИИ */
         .auth-screen { width: 100vw; height: 100vh; background: #141619; display: flex; justify-content: center; align-items: center; }
@@ -130,13 +143,13 @@
         /* ОСНОВНОЙ ЭКРАН (100% FULLSCREEN) */
         .workspace-fullscreen { display: none; width: 100vw; height: 100vh; }
         .chat-win { flex: 1; height: 100vh; }
-        .clist-win { width: 320px; height: 100vh; flex-shrink: 0; }
+        .clist-win { width: 330px; height: 100vh; flex-shrink: 0; }
 
         .my-info-bar { padding: 7px 8px; background: var(--bg-panel); border: 1px solid var(--border-dark); margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; }
         .cloud-status { font-size: 10px; padding: 2px 6px; border-radius: 3px; background: #064e3b; color: #34d399; }
         .filter-input { width: 100%; padding: 6px 8px; margin-bottom: 6px; outline: none; }
         .contact-list { flex: 1; overflow-y: auto; padding: 6px; margin-bottom: 6px; }
-        .group-title { font-weight: bold; color: #2ecc71; padding: 3px 2px; border-bottom: 1px dotted var(--border-light); margin-bottom: 6px; font-size: 12px; }
+        .group-title { font-weight: bold; color: #2ecc71; padding: 4px 2px; border-bottom: 1px dotted var(--border-light); margin: 6px 0 4px; font-size: 11.5px; text-transform: uppercase; }
         .contact-item {
             display: flex; align-items: center; justify-content: space-between;
             padding: 6px 8px; cursor: pointer; border: 1px solid transparent; margin-bottom: 2px;
@@ -144,17 +157,18 @@
         .contact-item:hover { background: var(--bg-hover); border: 1px dotted #2ecc71; }
         .contact-item.active { background: var(--bg-active); color: #ffffff; font-weight: bold; }
         .contact-left { display: flex; align-items: center; gap: 7px; overflow: hidden; }
-        .unread-badge { background: #e11d48; color: #fff; font-size: 10px; font-weight: bold; padding: 1px 6px; border: 1px solid #000; }
 
-        .clist-bottom { display: flex; flex-direction: column; gap: 6px; }
+        .clist-bottom { display: flex; flex-direction: column; gap: 5px; }
+        .clist-btn-row { display: flex; gap: 5px; }
+        .clist-btn-row button { flex: 1; }
         .status-bar { display: flex; align-items: center; justify-content: space-between; gap: 6px; }
         .status-bar select { flex: 1; padding: 4px; outline: none; font-size: 12px; }
         .qci-brand { text-align: center; font-size: 11px; color: var(--text-muted); padding-top: 4px; border-top: 1px solid var(--border-light); }
 
-        .chat-user-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); border: 1px solid var(--border-dark); padding: 6px 10px; margin-bottom: 6px; }
-        .chat-user-actions { display: flex; gap: 6px; }
+        .chat-user-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); border: 1px solid var(--border-dark); padding: 6px 10px; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
+        .chat-user-actions { display: flex; gap: 6px; align-items: center; }
         .messages-area { flex: 1; padding: 12px; overflow-y: auto; margin-bottom: 6px; user-select: text; }
-        .empty-chat-notice { color: var(--text-muted); text-align: center; margin-top: 16%; font-size: 13px; line-height: 1.6; }
+        .empty-chat-notice { color: var(--text-muted); text-align: center; margin-top: 15%; font-size: 13px; line-height: 1.6; }
         .msg-row { margin-bottom: 8px; line-height: 1.45; border-bottom: 1px dashed var(--border-light); padding: 4px 6px 6px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
         .msg-content-block { flex: 1; }
         .msg-header-me { color: var(--nick-me); font-weight: bold; font-size: 12px; }
@@ -169,21 +183,20 @@
         }
         .del-msg-btn:hover { background: #7f1d1d; color: #fff; }
 
-        .chat-toolbar { display: flex; align-items: center; gap: 6px; padding: 4px 6px; background: var(--bg-panel); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-dark); margin-bottom: 6px; }
-        .smiley { cursor: pointer; font-size: 15px; padding: 1px 4px; }
+        .chat-toolbar { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: var(--bg-panel); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-dark); margin-bottom: 6px; }
         .sound-toggle { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 11px; cursor: pointer; font-weight: bold; }
-        #msgInput { height: 85px; width: 100%; resize: none; padding: 8px 10px; margin-bottom: 6px; font-size: 13.5px; outline: none; }
+        #msgInput { height: 80px; width: 100%; resize: none; padding: 8px 10px; margin-bottom: 6px; font-size: 13.5px; outline: none; }
         .chat-footer { display: flex; justify-content: space-between; align-items: center; }
         .hotkey-hint { color: var(--text-muted); font-size: 11px; }
 
-        /* МОДАЛКА ПОИСКА ДРУЗЕЙ */
+        /* МОДАЛЬНЫЕ ОКНА */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.65); display: none; justify-content: center; align-items: center; z-index: 100; }
         .modal-overlay.open { display: flex; }
-        .find-win { width: 460px; height: 400px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
+        .modal-win { width: 480px; height: 420px; box-shadow: 0 10px 30px rgba(0,0,0,0.7); }
         .find-search-bar { display: flex; gap: 6px; margin-bottom: 8px; }
         .find-search-bar input { flex: 1; padding: 6px 8px; outline: none; }
         .find-results { flex: 1; overflow-y: auto; padding: 6px; margin-bottom: 8px; }
-        .found-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px dotted var(--border-light); }
+        .found-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px dotted var(--border-light); gap: 6px; }
     </style>
 </head>
 <body>
@@ -193,10 +206,10 @@
     <div class="qci-window login-win">
         <div class="title-bar">
             <div class="title-bar-text">
-                <span class="flower-icon"></span> QCI Cloud — Вход / Регистрация
+                <span class="flower-icon"></span> QCI Cloud — Авторизация
             </div>
             <div class="title-bar-controls">
-                <button onclick="toggleTheme()">🌙/☀️</button>
+                <button onclick="toggleTheme()">Тема</button>
             </div>
         </div>
         <div class="window-body">
@@ -204,93 +217,88 @@
                 <div class="big-flower"></div>
                 <div>
                     <h1>QCI Cloud</h1>
-                    <p>Работает между ПК без твоего сервера!</p>
+                    <p>Социальная сеть в стиле ICQ</p>
                 </div>
             </div>
 
-            <!-- Переключатель Вход / Регистрация -->
             <div class="auth-tabs">
-                <button class="win-btn active-tab" id="tabLoginBtn" onclick="switchAuthTab('login')">🔑 Войти</button>
-                <button class="win-btn" id="tabRegBtn" onclick="switchAuthTab('register')">📝 Зарегистрироваться</button>
+                <button class="win-btn active-tab" id="tabLoginBtn" onclick="switchAuthTab('login')">Войти</button>
+                <button class="win-btn" id="tabRegBtn" onclick="switchAuthTab('register')">Зарегистрироваться</button>
             </div>
 
             <div class="auth-error" id="authError"></div>
 
-            <!-- Форма Входа -->
+            <!-- Вход -->
             <div class="auth-form" id="loginForm">
                 <label><b>Ваш Никнейм или номер UIN:</b></label>
-                <input type="text" id="loginId" class="inset-box" placeholder="Введите ваш UIN или Ник">
+                <input type="text" id="loginId" class="inset-box" placeholder="Введите UIN или Ник">
                 <label><b>Пароль:</b></label>
                 <input type="password" id="loginPass" class="inset-box" placeholder="Введите пароль">
                 <button class="win-btn accent-btn" onclick="handleLogin()" style="margin-top:6px;">Войти в QCI</button>
             </div>
 
-            <!-- Форма Регистрации -->
+            <!-- Регистрация -->
             <div class="auth-form" id="regForm" style="display: none;">
                 <label><b>Придумайте Никнейм:</b></label>
-                <input type="text" id="regNick" class="inset-box" placeholder="Например: Снайпер_2026">
+                <input type="text" id="regNick" class="inset-box" placeholder="Например: USER">
                 <label><b>Придумайте Пароль:</b></label>
                 <input type="password" id="regPass" class="inset-box" placeholder="Минимум 3 символа">
                 <label><b>Повторите Пароль:</b></label>
                 <input type="password" id="regPass2" class="inset-box" placeholder="Повторите пароль">
-                <button class="win-btn accent-btn" onclick="handleRegister()" style="margin-top:6px;">✨ Создать аккаунт и получить UIN</button>
+                <button class="win-btn accent-btn" onclick="handleRegister()" style="margin-top:6px;">Создать аккаунт и получить UIN</button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 2. ГЛАВНЫЙ ЭКРАН МЕССЕНДЖЕРА (100% FULLSCREEN) -->
+<!-- 2. ГЛАВНЫЙ ЭКРАН МЕССЕНДЖЕРА -->
 <div class="workspace-fullscreen" id="appScreen">
 
     <!-- ОКНО ЧАТА -->
     <div class="qci-window chat-win">
         <div class="title-bar">
             <div class="title-bar-text" id="chatTitle">
-                <span class="flower-icon online"></span> QCI Cloud Session — Выберите чат
+                <span class="flower-icon online"></span> QCI Session — Выберите чат
             </div>
             <div class="title-bar-controls">
-                <button onclick="toggleTheme()">🌙 Тема</button>
+                <button onclick="toggleTheme()">Сменить тему</button>
             </div>
         </div>
         <div class="window-body">
             <div class="chat-user-bar">
                 <div>
-                    <strong>Кому:</strong> <span id="targetNick">Выберите контакт справа 👉</span>
-                    &nbsp;|&nbsp; <strong>UIN#:</strong> <span id="targetUin">---</span>
+                    <strong id="targetTypeLabel">Кому:</strong> <span id="targetNick">Выберите контакт или группу справа</span>
+                    &nbsp;|&nbsp; <strong>ID#:</strong> <span id="targetUin">---</span>
+                    <span id="myRoleBadgeArea"></span>
                 </div>
                 <div class="chat-user-actions">
-                    <button class="win-btn" id="clearChatBtn" onclick="clearChat()" disabled>🧹 Очистить лог</button>
-                    <button class="win-btn" id="removeFriendBtn" onclick="removeFriend()" disabled>❌ Удалить контакт</button>
+                    <button class="win-btn accent-btn" id="rolesModalBtn" onclick="openRolesModal()" style="display:none;">Участники и роли</button>
+                    <button class="win-btn" id="clearChatBtn" onclick="clearChat()" disabled>Очистить у себя</button>
+                    <button class="win-btn danger-btn" id="leaveOrRemoveBtn" onclick="leaveOrRemoveCurrent()" disabled>Удалить друга</button>
                 </div>
             </div>
 
             <div class="messages-area inset-box" id="messagesArea">
                 <div class="empty-chat-notice">
-                    🌐 <b>Облачный режим QCI активирован!</b><br>
-                    Этот файл работает вообще без Python-сервера.<br>
-                    Отправьте файл <b>index.html</b> другу или откройте его в другом браузере,<br>
-                    зарегистрируйтесь и найдите друг друга по UIN через <b>«🔍 Найти друзей»</b>!
+                    <b>Добро пожаловать в QCI Cloud v3!</b><br><br>
+                    • Все эмодзи заменены на настоящие <b>PNG-картинки</b>.<br>
+                    • Чужие сообщения удалять нельзя (только если вы <b>Админ</b> или <b>Создатель</b> в группе).<br>
+                    • Вы можете создавать свои группы, выдавать роли участникам, выходить из групп или удалять друзей.
                 </div>
             </div>
 
+            <!-- Панель настоящих PNG-смайлов (заполняется генератором PNG при старте) -->
             <div class="chat-toolbar">
-                <span class="smiley" onclick="insertSmiley('😊')">😊</span>
-                <span class="smiley" onclick="insertSmiley('😉')">😉</span>
-                <span class="smiley" onclick="insertSmiley('😄')">😄</span>
-                <span class="smiley" onclick="insertSmiley('😎')">😎</span>
-                <span class="smiley" onclick="insertSmiley('🤣')">🤣</span>
-                <span class="smiley" onclick="insertSmiley('❤️')">❤️</span>
-                <span class="smiley" onclick="insertSmiley('🔥')">🔥</span>
-                <span class="smiley" onclick="insertSmiley('🌹')">🌹</span>
+                <div id="pngSmileyToolbar" style="display:flex; gap:6px; align-items:center;"></div>
                 <label class="sound-toggle">
-                    <input type="checkbox" id="soundCheck" checked> 🔊 Звуки QCI
+                    <input type="checkbox" id="soundCheck" checked> Звуки QCI
                 </label>
             </div>
 
             <textarea id="msgInput" class="inset-box" placeholder="Введите сообщение... (Enter — отправить)" disabled></textarea>
 
             <div class="chat-footer">
-                <div class="hotkey-hint">Отправка: <b>Enter</b> | Удаление: <b>[x]</b> | Связь через глобальный облачный ретранслятор</div>
+                <div class="hotkey-hint">В личке можно удалять только свои сообщения. В группах Админы могут удалять любые сообщения!</div>
                 <button class="win-btn accent-btn" onclick="sendMessage()" id="sendBtn" disabled>Отправить (Send)</button>
             </div>
         </div>
@@ -303,7 +311,7 @@
                 <span class="flower-icon online"></span> QCI
             </div>
             <div class="title-bar-controls">
-                <button onclick="logout()">Выйти X</button>
+                <button onclick="logout()">Выход X</button>
             </div>
         </div>
         <div class="window-body">
@@ -312,57 +320,97 @@
                     <span class="flower-icon online" id="myFlower"></span>
                     <strong id="myNickDisplay">User</strong> <small id="myUinDisplay" style="color:var(--text-muted)"></small>
                 </div>
-                <span class="cloud-status" id="cloudIndicator">☁️ Online</span>
+                <span class="cloud-status" id="cloudIndicator">Cloud Online</span>
             </div>
 
-            <input type="text" class="filter-input inset-box" id="localFilter" placeholder="🔍 Фильтр по моим друзьям..." oninput="renderContacts()">
+            <input type="text" class="filter-input inset-box" id="localFilter" placeholder="Фильтр по контактам и группам..." oninput="renderContacts()">
 
-            <div class="contact-list inset-box">
-                <div class="group-title">▼ Контакты (Cloud & Bots)</div>
-                <div id="onlineContacts"></div>
-            </div>
+            <div class="contact-list inset-box" id="contactListContainer"></div>
 
             <div class="clist-bottom">
-                <button class="win-btn accent-btn" onclick="openFriendsModal()">🔍 Найти друзей (По UIN / Нику)</button>
-                <button class="win-btn" onclick="playSound('uhoh')">🎵 Тест звука «О-оу!»</button>
+                <div class="clist-btn-row">
+                    <button class="win-btn accent-btn" onclick="openFriendsModal()">Найти друзей / Группы</button>
+                    <button class="win-btn" onclick="openCreateGroupModal()">+ Создать группу</button>
+                </div>
+                <button class="win-btn" onclick="playSound('uhoh')">Тест звука «О-оу!»</button>
                 <div class="status-bar">
                     <span><b>Статус:</b></span>
                     <select id="statusSelect" class="inset-box" onchange="changeMyStatus(this.value)">
-                        <option value="online">🟢 В сети (Online)</option>
-                        <option value="away">🟡 Отошёл (Away)</option>
-                        <option value="dnd">🔴 Занят (DND)</option>
-                        <option value="offline">⚪ Невидимый (Offline)</option>
+                        <option value="online">В сети (Online)</option>
+                        <option value="away">Отошёл (Away)</option>
+                        <option value="dnd">Занят (DND)</option>
+                        <option value="offline">Невидимый (Offline)</option>
                     </select>
                 </div>
-                <div class="qci-brand">QCI Serverless • Cloud P2P</div>
+                <div class="qci-brand">QCI Serverless v3 • PNG & Roles</div>
             </div>
         </div>
     </div>
 
 </div>
 
-<!-- 3. МОДАЛКА ПОИСКА И ДОБАВЛЕНИЯ ДРУЗЕЙ -->
+<!-- 3. МОДАЛКА ПОИСКА ДРУЗЕЙ И ГРУПП -->
 <div class="modal-overlay" id="friendsModal">
-    <div class="qci-window find-win">
+    <div class="qci-window modal-win">
         <div class="title-bar">
-            <div class="title-bar-text">
-                <span class="flower-icon"></span> Глобальный поиск друзей QCI
-            </div>
-            <div class="title-bar-controls">
-                <button onclick="closeFriendsModal()">X</button>
-            </div>
+            <div class="title-bar-text"><span class="flower-icon"></span> Поиск друзей и групп QCI</div>
+            <div class="title-bar-controls"><button onclick="closeFriendsModal()">X</button></div>
         </div>
         <div class="window-body">
             <div style="margin-bottom:6px; font-size:11px; color:var(--text-muted);">
-                Вы можете выбрать человека из списка онлайн или ввести <b>точный UIN друга</b>, чтобы добавить его напрямую:
+                Найдите пользователя или группу в списке, либо введите точный UIN / ID группы:
             </div>
             <div class="find-search-bar">
-                <input type="text" id="globalSearchInput" class="inset-box" placeholder="Введите Ник или 6-значный UIN друга..." oninput="renderGlobalUsers()">
-                <button class="win-btn accent-btn" onclick="addByExactUin()">+ По UIN</button>
+                <input type="text" id="globalSearchInput" class="inset-box" placeholder="Введите Ник, название группы или ID..." oninput="renderGlobalUsers()">
+                <button class="win-btn accent-btn" onclick="addByExactUin()">+ Добавить ID</button>
             </div>
             <div class="find-results inset-box" id="globalResults"></div>
             <div style="text-align: right;">
-                <button class="win-btn" onclick="closeFriendsModal()">Закрыть окно</button>
+                <button class="win-btn" onclick="closeFriendsModal()">Закрыть</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 4. МОДАЛКА СОЗДАНИЯ НОВОЙ ГРУППЫ -->
+<div class="modal-overlay" id="createGroupModal">
+    <div class="qci-window modal-win" style="height: 250px; width: 380px;">
+        <div class="title-bar">
+            <div class="title-bar-text"><span class="flower-icon"></span> Создать новую группу</div>
+            <div class="title-bar-controls"><button onclick="closeCreateGroupModal()">X</button></div>
+        </div>
+        <div class="window-body" style="justify-content: space-between;">
+            <div>
+                <label style="display:block; margin-bottom:6px;"><b>Название вашей группы:</b></label>
+                <input type="text" id="newGroupNameInput" class="inset-box" style="width:100%; padding:8px; margin-bottom:10px;" placeholder="Например: Городской Чат">
+                <div style="font-size:11px; color:var(--text-muted);">
+                    Вы автоматически станете <b>Создателем (Owner)</b> группы, сможете выдавать роли Админов и удалять любые сообщения участников.
+                </div>
+            </div>
+            <div style="display:flex; justify-content:flex-end; gap:6px;">
+                <button class="win-btn accent-btn" onclick="createNewGroup()">Создать группу</button>
+                <button class="win-btn" onclick="closeCreateGroupModal()">Отмена</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 5. МОДАЛКА УПРАВЛЕНИЯ РОЛЯМИ В ГРУППЕ -->
+<div class="modal-overlay" id="rolesModal">
+    <div class="qci-window modal-win">
+        <div class="title-bar">
+            <div class="title-bar-text"><span class="flower-icon"></span> Управление ролями в группе</div>
+            <div class="title-bar-controls"><button onclick="closeRolesModal()">X</button></div>
+        </div>
+        <div class="window-body">
+            <div id="rolesModalInfo" style="margin-bottom:8px; font-size:11.5px; color:var(--text-muted);"></div>
+            <div class="find-search-bar">
+                <input type="text" id="addMemberUinInput" class="inset-box" placeholder="Введите UIN человека, чтобы добавить в группу...">
+                <button class="win-btn accent-btn" onclick="addMemberToActiveGroup()">+ В группу</button>
+            </div>
+            <div class="find-results inset-box" id="groupMembersList"></div>
+            <div style="text-align: right;">
+                <button class="win-btn" onclick="closeRolesModal()">Закрыть</button>
             </div>
         </div>
     </div>
@@ -370,28 +418,86 @@
 
 <script>
 // =====================================================================
-// ЛОКАЛЬНАЯ БАЗА + ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ ЧЕРЕЗ ПУБЛИЧНЫЙ БРОКЕР EMQX
+// 1. ГЕНЕРАТОР НАСТОЯЩИХ PNG-КАРТИНОК СМАЙЛОВ (НА CANVAS -> DATA:IMAGE/PNG)
+// =====================================================================
+const SMILEY_DEFS = [
+    { code: ':-)', label: 'Улыбка', draw: (ctx) => { drawBaseFace(ctx, '#facc15'); drawEyes(ctx); ctx.beginPath(); ctx.arc(16, 17, 7, 0.15*Math.PI, 0.85*Math.PI); ctx.stroke(); } },
+    { code: ';-)', label: 'Подмигивание', draw: (ctx) => { drawBaseFace(ctx, '#facc15'); ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(11, 12, 2, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.moveTo(19, 12); ctx.lineTo(24, 12); ctx.stroke(); ctx.beginPath(); ctx.arc(16, 17, 7, 0.15*Math.PI, 0.85*Math.PI); ctx.stroke(); } },
+    { code: ':-D', label: 'Смех', draw: (ctx) => { drawBaseFace(ctx, '#facc15'); drawEyes(ctx); ctx.fillStyle='#7f1d1d'; ctx.beginPath(); ctx.arc(16, 17, 7.5, 0, Math.PI); ctx.fill(); ctx.stroke(); } },
+    { code: '8-)', label: 'Крутой в очках', draw: (ctx) => { drawBaseFace(ctx, '#facc15'); ctx.fillStyle='#111'; ctx.fillRect(6, 9, 9, 6); ctx.fillRect(17, 9, 9, 6); ctx.beginPath(); ctx.moveTo(4, 11); ctx.lineTo(28, 11); ctx.lineWidth=2; ctx.stroke(); ctx.beginPath(); ctx.arc(16, 19, 6, 0.15*Math.PI, 0.85*Math.PI); ctx.stroke(); } },
+    { code: ':-(', label: 'Грусть', draw: (ctx) => { drawBaseFace(ctx, '#facc15'); drawEyes(ctx); ctx.beginPath(); ctx.arc(16, 24, 6.5, 1.15*Math.PI, 1.85*Math.PI); ctx.stroke(); } },
+    { code: ':-O', label: 'Удивление', draw: (ctx) => { drawBaseFace(ctx, '#facc15'); drawEyes(ctx); ctx.fillStyle='#000'; ctx.beginPath(); ctx.arc(16, 21, 4.5, 0, Math.PI*2); ctx.fill(); } },
+    { code: '*ROFL*', label: 'Угар', draw: (ctx) => { drawBaseFace(ctx, '#fb923c'); drawEyes(ctx); ctx.fillStyle='#fff'; ctx.beginPath(); ctx.arc(16, 17, 7.5, 0, Math.PI); ctx.fill(); ctx.stroke(); } },
+    { code: '@}->--', label: 'Роза QCI', draw: (ctx) => { ctx.strokeStyle='#15803d'; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(16, 29); ctx.lineTo(16, 14); ctx.stroke(); ctx.fillStyle='#22c55e'; ctx.beginPath(); ctx.ellipse(21, 21, 4, 2, -0.4, 0, Math.PI*2); ctx.fill(); ctx.fillStyle='#e11d48'; for(let a=0;a<6;a++){ ctx.beginPath(); ctx.arc(16+Math.cos(a)*4, 10+Math.sin(a)*4, 4, 0, Math.PI*2); ctx.fill(); } ctx.fillStyle='#be123c'; ctx.beginPath(); ctx.arc(16, 10, 3.5, 0, Math.PI*2); ctx.fill(); } }
+];
+
+const PNG_SMILEYS = {};
+
+function drawBaseFace(ctx, color) {
+    const grad = ctx.createRadialGradient(12, 10, 2, 16, 16, 14);
+    grad.addColorStop(0, '#fef08a');
+    grad.addColorStop(1, color);
+    ctx.fillStyle = grad;
+    ctx.beginPath(); ctx.arc(16, 16, 13, 0, Math.PI * 2); ctx.fill();
+    ctx.lineWidth = 1.8; ctx.strokeStyle = '#422006'; ctx.stroke();
+}
+function drawEyes(ctx) {
+    ctx.fillStyle = '#1c1917';
+    ctx.beginPath(); ctx.arc(11.5, 12, 2, 0, Math.PI * 2); ctx.fill();
+    ctx.beginPath(); ctx.arc(20.5, 12, 2, 0, Math.PI * 2); ctx.fill();
+}
+
+function initPngSmileys() {
+    const toolbar = document.getElementById('pngSmileyToolbar');
+    toolbar.innerHTML = '';
+    SMILEY_DEFS.forEach(s => {
+        const c = document.createElement('canvas');
+        c.width = 32; c.height = 32;
+        const ctx = c.getContext('2d');
+        s.draw(ctx);
+        const pngUrl = c.toDataURL('image/png');
+        PNG_SMILEYS[s.code] = pngUrl;
+
+        const img = document.createElement('img');
+        img.src = pngUrl;
+        img.className = 'toolbar-smiley';
+        img.title = `${s.label} (${s.code})`;
+        img.onclick = () => insertSmiley(s.code);
+        toolbar.appendChild(img);
+    });
+}
+
+function escapeHtml(str) {
+    return str.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]));
+}
+
+function renderTextWithPngSmileys(text) {
+    let safe = escapeHtml(text);
+    for (const [code, pngData] of Object.entries(PNG_SMILEYS)) {
+        const escapedCode = escapeHtml(code);
+        safe = safe.split(escapedCode).join(`<img src="${pngData}" class="png-smiley" alt="${escapedCode}">`);
+    }
+    return safe;
+}
+
+// =====================================================================
+// 2. ДАННЫЕ ПОЛЬЗОВАТЕЛЕЙ, ГРУПП, РОЛЕЙ И ПРАВ ДОСТУПА
 // =====================================================================
 const DEFAULT_USERS = {
-    "000000": { uin: "000000", nickname: "🌐 Общий_Зал_QCI (Все)", status: "online", isBot: false, isRoom: true },
-    "100001": { uin: "100001", nickname: "КиберПанк_2003 (Бот)", status: "online", isBot: true },
-    "404999": { uin: "404999", nickname: "Агент_Матрицы (Бот)", status: "away", isBot: true },
-    "777888": { uin: "777888", nickname: "Хакерша_Кэт (Бот)", status: "online", isBot: true }
 };
 
 const BOT_REPLIES = [
-    "О-оу! Теперь QCI работает вообще без Python-сервера через облачный ретранслятор! 8-)",
-    "Ты можешь скинуть этот файл index.html другу, и вы сможете переписываться с разных компов!",
-    "Попробуй написать в «🌐 Общий_Зал_QCI» — его видят все пользователи онлайн!",
-    "Лови розу в чат: @}->--"
+    "Зацени новые PNG-смайлы в чате! :-) ;-)",
+    "Попробуй удалить моё сообщение в личке — не выйдет! А если создашь свою группу, там ты будешь Создателем и сможешь модерировать чат 8-)",
+    "Роза для тебя: @}->--",
+    "В шапке группы теперь можно выдавать роли Админов! *ROFL*"
 ];
 
 let currentUser = null;
 let activeTargetUin = null;
 let mqttClient = null;
-const TOPIC_PREFIX = "qci_retro_global_v2/";
+const TOPIC_PREFIX = "qci_retro_global_v3/";
 
-// Загрузка данных из памяти браузера
 function getAccounts() { return JSON.parse(localStorage.getItem('qci_accounts') || '{}'); }
 function saveAccounts(acc) { localStorage.setItem('qci_accounts', JSON.stringify(acc)); }
 
@@ -405,9 +511,28 @@ function saveKnownUser(u) {
     localStorage.setItem('qci_known_users', JSON.stringify(saved));
 }
 
-function getMyFriends() {
+// Хранилище групп и ролей: { groupId: { uin, nickname, isGroup: true, owner: uin, roles: { uin: 'owner'|'admin'|'member' } } }
+function getGroups() {
+    const saved = JSON.parse(localStorage.getItem('qci_groups_v3') || '{}');
+    if (!saved["000000"]) {
+        saved["000000"] = {
+            uin: "000000",
+            nickname: "",
+            isGroup: true,
+            owner: "100001",
+            roles: { "100001": "owner", "404999": "admin" }
+        };
+        localStorage.setItem('qci_groups_v3', JSON.stringify(saved));
+    }
+    return saved;
+}
+function saveGroups(groups) {
+    localStorage.setItem('qci_groups_v3', JSON.stringify(groups));
+}
+
+function getMyContactsAndGroups() {
     if (!currentUser) return [];
-    const key = 'qci_friends_' + currentUser.uin;
+    const key = 'qci_clist_v3_' + currentUser.uin;
     let list = JSON.parse(localStorage.getItem(key) || 'null');
     if (!list) {
         list = ["000000", "100001"];
@@ -415,48 +540,70 @@ function getMyFriends() {
     }
     return list;
 }
-function saveMyFriends(list) {
-    localStorage.setItem('qci_friends_' + currentUser.uin, JSON.stringify(list));
+function saveMyContactsAndGroups(list) {
+    localStorage.setItem('qci_clist_v3_' + currentUser.uin, JSON.stringify(list));
 }
 
-function getMessages() {
-    return JSON.parse(localStorage.getItem('qci_messages_v2') || '[]');
-}
-function saveMessages(msgs) {
-    localStorage.setItem('qci_messages_v2', JSON.stringify(msgs));
+function getMessages() { return JSON.parse(localStorage.getItem('qci_messages_v3') || '[]'); }
+function saveMessages(msgs) { localStorage.setItem('qci_messages_v3', JSON.stringify(msgs)); }
+
+// Проверка роли пользователя в группе
+function getUserRoleInGroup(groupId, userUin) {
+    const groups = getGroups();
+    const g = groups[groupId];
+    if (!g) return 'member';
+    if (g.owner === userUin || (g.roles && g.roles[userUin] === 'owner')) return 'owner';
+    if (g.roles && g.roles[userUin] === 'admin') return 'admin';
+    return 'member';
 }
 
-// ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК ВХОД / РЕГИСТРАЦИЯ
+function getRoleBadgeHtml(role) {
+    if (role === 'owner') return '<span class="role-badge role-owner">Создатель</span>';
+    if (role === 'admin') return '<span class="role-badge role-admin">Админ</span>';
+    return '<span class="role-badge role-member">Участник</span>';
+}
+
+// ПРОВЕРКА ПРАВ НА УДАЛЕНИЕ СООБЩЕНИЯ
+function canDeleteMessage(msg) {
+    if (!currentUser) return false;
+    // Свои сообщения можно удалять всегда
+    if (msg.sender_uin === currentUser.uin) return true;
+
+    // Если это группа — проверяем, являемся ли мы Создателем или Админом этой группы
+    const groups = getGroups();
+    if (groups[msg.receiver_uin]) {
+        const myRole = getUserRoleInGroup(msg.receiver_uin, currentUser.uin);
+        if (myRole === 'owner' || myRole === 'admin') return true;
+    }
+    // В личке или без прав админа чужие сообщения удалять НЕЛЬЗЯ
+    return false;
+}
+
+// =====================================================================
+// 3. АВТОРИЗАЦИЯ И РЕГИСТРАЦИЯ
+// =====================================================================
 function switchAuthTab(mode) {
     document.getElementById('authError').innerText = '';
-    if (mode === 'login') {
-        document.getElementById('loginForm').style.display = 'flex';
-        document.getElementById('regForm').style.display = 'none';
-        document.getElementById('tabLoginBtn').classList.add('active-tab');
-        document.getElementById('tabRegBtn').classList.remove('active-tab');
-    } else {
-        document.getElementById('loginForm').style.display = 'none';
-        document.getElementById('regForm').style.display = 'flex';
-        document.getElementById('tabLoginBtn').classList.remove('active-tab');
-        document.getElementById('tabRegBtn').classList.add('active-tab');
-    }
+    document.getElementById('loginForm').style.display = (mode === 'login') ? 'flex' : 'none';
+    document.getElementById('regForm').style.display = (mode === 'register') ? 'flex' : 'none';
+    document.getElementById('tabLoginBtn').classList.toggle('active-tab', mode === 'login');
+    document.getElementById('tabRegBtn').classList.toggle('active-tab', mode === 'register');
 }
 
-// РЕГИСТРАЦИЯ НОВОГО АККАУНТА
 function handleRegister() {
     const nick = document.getElementById('regNick').value.trim();
     const pass = document.getElementById('regPass').value.trim();
     const pass2 = document.getElementById('regPass2').value.trim();
     const err = document.getElementById('authError');
 
-    if (nick.length < 2) { err.innerText = '❌ Введите никнейм (минимум 2 символа)!'; return; }
-    if (pass.length < 3) { err.innerText = '❌ Пароль должен быть не короче 3 символов!'; return; }
-    if (pass !== pass2) { err.innerText = '❌ Пароли не совпадают!'; return; }
+    if (nick.length < 2) { err.innerText = 'Введите никнейм (минимум 2 символа)!'; return; }
+    if (pass.length < 3) { err.innerText = 'Пароль должен быть не короче 3 символов!'; return; }
+    if (pass !== pass2) { err.innerText = 'Пароли не совпадают!'; return; }
 
     const accounts = getAccounts();
     for (const u of Object.values(accounts)) {
         if (u.nickname.toLowerCase() === nick.toLowerCase()) {
-            err.innerText = '❌ Этот никнейм уже занят, выберите другой или войдите!';
+            err.innerText = 'Этот никнейм уже занят, выберите другой или войдите!';
             return;
         }
     }
@@ -467,14 +614,13 @@ function handleRegister() {
     saveAccounts(accounts);
     saveKnownUser({ uin: newUin, nickname: nick, status: 'online' });
 
-    // Приветственное сообщение новому пользователю
     const msgs = getMessages();
     msgs.push({
         id: Date.now(),
         sender_uin: "100001",
         sender_nick: "КиберПанк_2003 (Бот)",
         receiver_uin: newUin,
-        content: `Поздравляю с регистрацией в QCI Cloud, ${nick}! Твой личный номер UIN: ${newUin}. Теперь ты можешь общаться без сервера! :-)`,
+        content: `Добро пожаловать в QCI, ${nick}! Твой UIN: ${newUin}. Попробуй отправить PNG-смайл :-) или создай свою группу!`,
         timestamp: new Date().toLocaleTimeString().slice(0,5)
     });
     saveMessages(msgs);
@@ -482,7 +628,6 @@ function handleRegister() {
     loginSuccess(newUser);
 }
 
-// ВХОД В АККАУНТ
 function handleLogin() {
     const id = document.getElementById('loginId').value.trim();
     const pass = document.getElementById('loginPass').value.trim();
@@ -491,21 +636,10 @@ function handleLogin() {
     const accounts = getAccounts();
     let found = null;
     for (const u of Object.values(accounts)) {
-        if (u.uin === id || u.nickname.toLowerCase() === id.toLowerCase()) {
-            found = u;
-            break;
-        }
+        if (u.uin === id || u.nickname.toLowerCase() === id.toLowerCase()) { found = u; break; }
     }
-
-    if (!found) {
-        err.innerText = '❌ Аккаунт не найден! Нажмите вкладку «📝 Зарегистрироваться» выше.';
-        return;
-    }
-    if (found.password !== pass) {
-        err.innerText = '❌ Неверный пароль!';
-        return;
-    }
-
+    if (!found) { err.innerText = 'Аккаунт не найден! Зарегистрируйтесь выше.'; return; }
+    if (found.password !== pass) { err.innerText = 'Неверный пароль!'; return; }
     loginSuccess(found);
 }
 
@@ -513,12 +647,20 @@ function loginSuccess(user) {
     currentUser = user;
     sessionStorage.setItem('qci_active_user', JSON.stringify(user));
 
+    // Регистрируем себя участником в Общем Зале, если ещё нет роли
+    const groups = getGroups();
+    if (groups["000000"] && !groups["000000"].roles[user.uin]) {
+        groups["000000"].roles[user.uin] = "member";
+        saveGroups(groups);
+    }
+
     document.getElementById('authScreen').style.display = 'none';
     document.getElementById('appScreen').style.display = 'flex';
     document.getElementById('myNickDisplay').innerText = user.nickname;
     document.getElementById('myUinDisplay').innerText = `(#${user.uin})`;
     document.getElementById('myTitleBar').innerHTML = `<span class="flower-icon online"></span> QCI ${user.uin} - ${user.nickname}`;
 
+    initPngSmileys();
     playSound('horn');
     renderContacts();
     connectCloudBroker();
@@ -529,21 +671,23 @@ function logout() {
     location.reload();
 }
 
-// ОБЛАЧНАЯ СВЯЗЬ БЕЗ СЕРВЕРА (ЧЕРЕЗ WSS ПУБЛИЧНЫЙ БРОКЕР)
+// =====================================================================
+// 4. ОБЛАЧНАЯ СИНХРОНИЗАЦИЯ СООБЩЕНИЙ, ГРУПП, РОЛЕЙ И УДАЛЕНИЙ
+// =====================================================================
 function connectCloudBroker() {
     if (typeof mqtt === 'undefined') return;
     const ind = document.getElementById('cloudIndicator');
-    ind.innerText = '☁️ Подключение...';
+    ind.innerText = 'Подключение...';
 
     mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
 
     mqttClient.on('connect', () => {
-        ind.innerText = '☁️ Cloud Online';
+        ind.innerText = 'Cloud Online';
         mqttClient.subscribe(TOPIC_PREFIX + 'presence');
-        mqttClient.subscribe(TOPIC_PREFIX + 'msg/' + currentUser.uin);
-        mqttClient.subscribe(TOPIC_PREFIX + 'msg/000000');
+        mqttClient.subscribe(TOPIC_PREFIX + 'group_sync');
+        mqttClient.subscribe(TOPIC_PREFIX + 'del_msg');
+        mqttClient.subscribe(TOPIC_PREFIX + 'msg/#');
 
-        // Объявляем всем в облаке, что мы онлайн
         announcePresence();
         setInterval(announcePresence, 8000);
     });
@@ -551,20 +695,43 @@ function connectCloudBroker() {
     mqttClient.on('message', (topic, payload) => {
         try {
             const data = JSON.parse(payload.toString());
+
             if (topic.endsWith('/presence')) {
                 if (data.uin && data.uin !== currentUser.uin) {
                     saveKnownUser({ uin: data.uin, nickname: data.nickname, status: data.status });
                     renderContacts();
                 }
+            } else if (topic.endsWith('/group_sync')) {
+                // Синхронизация ролей и новых групп между пользователями
+                const groups = getGroups();
+                groups[data.group.uin] = data.group;
+                saveGroups(groups);
+                renderContacts();
+                if (activeTargetUin === data.group.uin) {
+                    updateActiveHeader();
+                    renderMessages();
+                    if (document.getElementById('rolesModal').classList.contains('open')) renderGroupMembersModal();
+                }
+            } else if (topic.endsWith('/del_msg')) {
+                // Синхронизация удаления сообщения админом или автором
+                const msgs = getMessages().filter(m => m.id !== data.msgId);
+                saveMessages(msgs);
+                renderMessages();
             } else if (topic.includes('/msg/')) {
                 if (data.sender_uin === currentUser.uin) return;
                 saveKnownUser({ uin: data.sender_uin, nickname: data.sender_nick, status: 'online' });
 
-                // Если нам написал новый человек — автоматически добавляем его в список контактов
-                const friends = getMyFriends();
-                if (data.receiver_uin === currentUser.uin && !friends.includes(data.sender_uin)) {
-                    friends.push(data.sender_uin);
-                    saveMyFriends(friends);
+                const myList = getMyContactsAndGroups();
+                const isGroupMsg = data.receiver_uin.startsWith('G') || data.receiver_uin === '000000';
+
+                // Если это сообщение в группу, в которой мы не состоим — игнорируем
+                if (isGroupMsg && !myList.includes(data.receiver_uin)) return;
+                // Если это личное сообщение — проверяем, что оно адресовано нам
+                if (!isGroupMsg && data.receiver_uin !== currentUser.uin) return;
+
+                if (!isGroupMsg && !myList.includes(data.sender_uin)) {
+                    myList.push(data.sender_uin);
+                    saveMyContactsAndGroups(myList);
                 }
 
                 const msgs = getMessages();
@@ -573,7 +740,7 @@ function connectCloudBroker() {
 
                 playSound('uhoh');
                 renderContacts();
-                if (activeTargetUin === data.sender_uin || (data.receiver_uin === '000000' && activeTargetUin === '000000')) {
+                if (activeTargetUin === data.sender_uin || activeTargetUin === data.receiver_uin) {
                     renderMessages();
                 }
             }
@@ -584,85 +751,178 @@ function connectCloudBroker() {
 function announcePresence() {
     if (mqttClient && mqttClient.connected && currentUser) {
         mqttClient.publish(TOPIC_PREFIX + 'presence', JSON.stringify({
-            uin: currentUser.uin,
-            nickname: currentUser.nickname,
-            status: currentUser.status || 'online'
+            uin: currentUser.uin, nickname: currentUser.nickname, status: currentUser.status || 'online'
         }));
     }
 }
 
-// ОТРИСОВКА КОНТАКТОВ И СООБЩЕНИЙ
+function broadcastGroupSync(groupObj) {
+    if (mqttClient && mqttClient.connected) {
+        mqttClient.publish(TOPIC_PREFIX + 'group_sync', JSON.stringify({ group: groupObj }));
+    }
+}
+
+// =====================================================================
+// 5. ОТРИСОВКА КОНТАКТ-ЛИСТА (ДРУЗЬЯ ОТДЕЛЬНО, ГРУППЫ ОТДЕЛЬНО)
+// =====================================================================
 function renderContacts() {
     const filter = (document.getElementById('localFilter')?.value || '').toLowerCase();
-    const container = document.getElementById('onlineContacts');
+    const container = document.getElementById('contactListContainer');
     container.innerHTML = '';
 
     const known = getKnownUsers();
-    const friends = getMyFriends();
+    const groups = getGroups();
+    const myList = getMyContactsAndGroups();
 
-    friends.forEach(uin => {
-        const u = known[uin] || { uin, nickname: `Контакт #${uin}`, status: 'online' };
-        if (filter && !u.nickname.toLowerCase().includes(filter) && !u.uin.includes(filter)) return;
+    const groupItems = [];
+    const friendItems = [];
 
+    myList.forEach(id => {
+        if (groups[id]) {
+            const g = groups[id];
+            if (!filter || g.nickname.toLowerCase().includes(filter) || g.uin.toLowerCase().includes(filter)) {
+                groupItems.push(g);
+            }
+        } else {
+            const u = known[id] || { uin: id, nickname: `Контакт #${id}`, status: 'online' };
+            if (!filter || u.nickname.toLowerCase().includes(filter) || u.uin.includes(filter)) {
+                friendItems.push(u);
+            }
+        }
+    });
+
+    // Секция Групп
+    const gTitle = document.createElement('div');
+    gTitle.className = 'group-title';
+    gTitle.innerText = `▼ Группы (${groupItems.length})`;
+    container.appendChild(gTitle);
+
+    groupItems.forEach(g => {
+        const myRole = getUserRoleInGroup(g.uin, currentUser.uin);
+        const div = document.createElement('div');
+        div.className = 'contact-item' + (activeTargetUin === g.uin ? ' active' : '');
+        div.onclick = () => selectContact(g.uin);
+        div.innerHTML = `
+            <div class="contact-left">
+                <span class="flower-icon online"></span>
+                <span><b>[Группа]</b> ${escapeHtml(g.nickname)}</span>
+            </div>
+            ${getRoleBadgeHtml(myRole)}
+        `;
+        container.appendChild(div);
+    });
+
+    // Секция Друзей
+    const fTitle = document.createElement('div');
+    fTitle.className = 'group-title';
+    fTitle.innerText = `▼ Друзья (${friendItems.length})`;
+    container.appendChild(fTitle);
+
+    friendItems.forEach(u => {
         const div = document.createElement('div');
         div.className = 'contact-item' + (activeTargetUin === u.uin ? ' active' : '');
         div.onclick = () => selectContact(u.uin);
         div.innerHTML = `
             <div class="contact-left">
-                <span class="flower-icon ${u.status}"></span>
-                <span>${u.nickname} <small style="opacity:0.65;">(${u.uin})</small></span>
+                <span class="flower-icon ${u.status || 'online'}"></span>
+                <span>${escapeHtml(u.nickname)} <small style="opacity:0.65;">(${u.uin})</small></span>
             </div>
         `;
         container.appendChild(div);
     });
 }
 
-function selectContact(uin) {
-    activeTargetUin = uin;
-    const u = getKnownUsers()[uin] || { uin, nickname: `Контакт #${uin}`, status: 'online' };
-
-    document.getElementById('targetNick').innerText = u.nickname;
-    document.getElementById('targetUin').innerText = u.uin;
-    document.getElementById('chatTitle').innerHTML = `<span class="flower-icon ${u.status}"></span> QCI Cloud — ${u.nickname} (${u.uin})`;
+function selectContact(id) {
+    activeTargetUin = id;
+    updateActiveHeader();
 
     const msgInput = document.getElementById('msgInput');
     msgInput.disabled = false;
     document.getElementById('sendBtn').disabled = false;
     document.getElementById('clearChatBtn').disabled = false;
-    document.getElementById('removeFriendBtn').disabled = (uin === '000000');
+    document.getElementById('leaveOrRemoveBtn').disabled = false;
     msgInput.focus();
 
     renderContacts();
     renderMessages();
 }
 
+function updateActiveHeader() {
+    if (!activeTargetUin) return;
+    const groups = getGroups();
+    const known = getKnownUsers();
+    const isGroup = Boolean(groups[activeTargetUin]);
+
+    const leaveBtn = document.getElementById('leaveOrRemoveBtn');
+    const rolesBtn = document.getElementById('rolesModalBtn');
+    const badgeArea = document.getElementById('myRoleBadgeArea');
+
+    if (isGroup) {
+        const g = groups[activeTargetUin];
+        const myRole = getUserRoleInGroup(g.uin, currentUser.uin);
+        document.getElementById('targetTypeLabel').innerText = 'Группа:';
+        document.getElementById('targetNick').innerText = g.nickname;
+        document.getElementById('targetUin').innerText = g.uin;
+        document.getElementById('chatTitle').innerHTML = `<span class="flower-icon online"></span> Группа: ${escapeHtml(g.nickname)} (${g.uin})`;
+        badgeArea.innerHTML = `&nbsp;|&nbsp; Ваша роль: ${getRoleBadgeHtml(myRole)}`;
+        rolesBtn.style.display = 'inline-flex';
+        leaveBtn.innerText = 'Покинуть группу';
+    } else {
+        const u = known[activeTargetUin] || { uin: activeTargetUin, nickname: `Контакт #${activeTargetUin}`, status: 'online' };
+        document.getElementById('targetTypeLabel').innerText = 'Друг:';
+        document.getElementById('targetNick').innerText = u.nickname;
+        document.getElementById('targetUin').innerText = u.uin;
+        document.getElementById('chatTitle').innerHTML = `<span class="flower-icon ${u.status || 'online'}"></span> Чат с ${escapeHtml(u.nickname)} (${u.uin})`;
+        badgeArea.innerHTML = '';
+        rolesBtn.style.display = 'none';
+        leaveBtn.innerText = 'Удалить друга';
+    }
+}
+
+// =====================================================================
+// 6. ОТРИСОВКА СООБЩЕНИЙ И ПРОВЕРКА ПРАВ НА УДАЛЕНИЕ
+// =====================================================================
 function renderMessages() {
     if (!activeTargetUin) return;
     const area = document.getElementById('messagesArea');
     const all = getMessages();
+    const groups = getGroups();
+    const isGroup = Boolean(groups[activeTargetUin]);
 
     const chatMsgs = all.filter(m => {
-        if (activeTargetUin === '000000') return m.receiver_uin === '000000';
+        if (isGroup) return m.receiver_uin === activeTargetUin;
         return (m.sender_uin === currentUser.uin && m.receiver_uin === activeTargetUin) ||
                (m.sender_uin === activeTargetUin && m.receiver_uin === currentUser.uin);
     });
 
     if (chatMsgs.length === 0) {
-        area.innerHTML = '<div class="empty-chat-notice">Сообщений пока нет. Напишите первым! 👋</div>';
+        area.innerHTML = '<div class="empty-chat-notice">Сообщений пока нет. Напишите первым или отправьте PNG-смайл!</div>';
         return;
     }
 
     area.innerHTML = chatMsgs.map(m => {
         const isMe = m.sender_uin === currentUser.uin;
+        let roleTag = '';
+        if (isGroup) {
+            const senderRole = getUserRoleInGroup(activeTargetUin, m.sender_uin);
+            roleTag = getRoleBadgeHtml(senderRole);
+        }
+
+        // Кнопка удаления показывается ТОЛЬКО если canDeleteMessage(m) === true
+        const allowDelete = canDeleteMessage(m);
+        const delBtnHtml = allowDelete
+            ? `<button class="del-msg-btn" onclick="deleteSingleMessage(${m.id})" title="Удалить сообщение">[x]</button>`
+            : '';
+
         return `
             <div class="msg-row">
                 <div class="msg-content-block">
                     <div class="${isMe ? 'msg-header-me' : 'msg-header-other'}">
-                        ${m.sender_nick} [${m.timestamp}]:
+                        ${escapeHtml(m.sender_nick)} ${roleTag} <span style="opacity:0.75;">[${m.timestamp}]</span>:
                     </div>
-                    <div class="msg-text">${m.content}</div>
+                    <div class="msg-text">${renderTextWithPngSmileys(m.content)}</div>
                 </div>
-                <button class="del-msg-btn" onclick="deleteSingleMessage(${m.id})" title="Удалить сообщение">[x]</button>
+                ${delBtnHtml}
             </div>
         `;
     }).join('');
@@ -689,12 +949,10 @@ function sendMessage() {
     saveMessages(msgs);
     renderMessages();
 
-    // Отправляем через облако реальному собеседнику или в Общий Зал
     if (mqttClient && mqttClient.connected) {
         mqttClient.publish(TOPIC_PREFIX + 'msg/' + activeTargetUin, JSON.stringify(msgObj));
     }
 
-    // Если пишем боту — он отвечает через 0.6 сек
     const targetUser = getKnownUsers()[activeTargetUin];
     if (targetUser && targetUser.isBot) {
         setTimeout(() => {
@@ -717,15 +975,29 @@ function sendMessage() {
 }
 
 function deleteSingleMessage(id) {
-    const msgs = getMessages().filter(m => m.id !== id);
-    saveMessages(msgs);
+    const all = getMessages();
+    const targetMsg = all.find(m => m.id === id);
+    if (!targetMsg) return;
+
+    // Строгая серверно-логическая защита: проверяем права перед удалением!
+    if (!canDeleteMessage(targetMsg)) {
+        alert('Ошибка прав доступа: Вы можете удалять только свои сообщения (или любые сообщения, если вы Админ/Создатель группы)!');
+        return;
+    }
+
+    saveMessages(all.filter(m => m.id !== id));
     renderMessages();
+
+    if (mqttClient && mqttClient.connected) {
+        mqttClient.publish(TOPIC_PREFIX + 'del_msg', JSON.stringify({ msgId: id }));
+    }
 }
 
 function clearChat() {
     if (!activeTargetUin) return;
+    const isGroup = Boolean(getGroups()[activeTargetUin]);
     const msgs = getMessages().filter(m => {
-        if (activeTargetUin === '000000') return m.receiver_uin !== '000000';
+        if (isGroup) return m.receiver_uin !== activeTargetUin;
         const isThisChat = (m.sender_uin === currentUser.uin && m.receiver_uin === activeTargetUin) ||
                            (m.sender_uin === activeTargetUin && m.receiver_uin === currentUser.uin);
         return !isThisChat;
@@ -734,7 +1006,180 @@ function clearChat() {
     renderMessages();
 }
 
-// ПОИСК И ДОБАВЛЕНИЕ ДРУЗЕЙ
+// =====================================================================
+// 7. ВЫХОД ИЗ ГРУППЫ / УДАЛЕНИЕ ДРУГА / УПРАВЛЕНИЕ РОЛЯМИ
+// =====================================================================
+function leaveOrRemoveCurrent() {
+    if (!activeTargetUin) return;
+    const groups = getGroups();
+    const isGroup = Boolean(groups[activeTargetUin]);
+
+    const myList = getMyContactsAndGroups().filter(id => id !== activeTargetUin);
+    saveMyContactsAndGroups(myList);
+
+    if (isGroup && groups[activeTargetUin].roles) {
+        delete groups[activeTargetUin].roles[currentUser.uin];
+        saveGroups(groups);
+        broadcastGroupSync(groups[activeTargetUin]);
+    }
+
+    const leftTitle = isGroup ? 'Вы покинули группу.' : 'Пользователь удалён из ваших друзей.';
+    activeTargetUin = null;
+
+    document.getElementById('targetNick').innerText = 'Выберите контакт или группу справа';
+    document.getElementById('targetUin').innerText = '---';
+    document.getElementById('myRoleBadgeArea').innerHTML = '';
+    document.getElementById('rolesModalBtn').style.display = 'none';
+    document.getElementById('msgInput').disabled = true;
+    document.getElementById('sendBtn').disabled = true;
+    document.getElementById('clearChatBtn').disabled = true;
+    document.getElementById('leaveOrRemoveBtn').disabled = true;
+
+    renderContacts();
+    document.getElementById('messagesArea').innerHTML = `<div class="empty-chat-notice"><b>${leftTitle}</b><br>Вы всегда можете вернуться или найти новых друзей через поиск.</div>`;
+}
+
+// Создание новой группы
+function openCreateGroupModal() {
+    document.getElementById('newGroupNameInput').value = '';
+    document.getElementById('createGroupModal').classList.add('open');
+}
+function closeCreateGroupModal() {
+    document.getElementById('createGroupModal').classList.remove('open');
+}
+
+function createNewGroup() {
+    const name = document.getElementById('newGroupNameInput').value.trim();
+    if (name.length < 2) return;
+
+    const groupId = 'G' + Math.floor(10000 + Math.random() * 89999);
+    const newGroup = {
+        uin: groupId,
+        nickname: name,
+        isGroup: true,
+        owner: currentUser.uin,
+        roles: {
+            [currentUser.uin]: 'owner',
+            "100001": 'member'
+        }
+    };
+
+    const groups = getGroups();
+    groups[groupId] = newGroup;
+    saveGroups(groups);
+
+    const myList = getMyContactsAndGroups();
+    if (!myList.includes(groupId)) {
+        myList.push(groupId);
+        saveMyContactsAndGroups(myList);
+    }
+
+    broadcastGroupSync(newGroup);
+    closeCreateGroupModal();
+    selectContact(groupId);
+}
+
+// Управление ролями участников в группе
+function openRolesModal() {
+    if (!activeTargetUin || !getGroups()[activeTargetUin]) return;
+    document.getElementById('addMemberUinInput').value = '';
+    document.getElementById('rolesModal').classList.add('open');
+    renderGroupMembersModal();
+}
+function closeRolesModal() {
+    document.getElementById('rolesModal').classList.remove('open');
+}
+
+function renderGroupMembersModal() {
+    const groups = getGroups();
+    const g = groups[activeTargetUin];
+    if (!g) return;
+
+    const myRole = getUserRoleInGroup(g.uin, currentUser.uin);
+    const canManageRoles = (myRole === 'owner' || myRole === 'admin');
+
+    document.getElementById('rolesModalInfo').innerHTML = canManageRoles
+        ? `Вы <b>${myRole === 'owner' ? 'Создатель' : 'Админ'}</b> группы <b>${escapeHtml(g.nickname)}</b> (${g.uin}). Вы можете назначать Админов и управлять участниками:`
+        : `Группа <b>${escapeHtml(g.nickname)}</b> (${g.uin}). Только Создатель и Админы могут менять роли участников.`;
+
+    const known = getKnownUsers();
+    const box = document.getElementById('groupMembersList');
+    const memberUins = Object.keys(g.roles || {});
+
+    box.innerHTML = memberUins.map(uin => {
+        const u = (uin === currentUser.uin)
+            ? currentUser
+            : (known[uin] || { uin, nickname: `Участник #${uin}` });
+        const role = getUserRoleInGroup(g.uin, uin);
+
+        let controls = '';
+        if (canManageRoles && uin !== g.owner && uin !== currentUser.uin) {
+            if (role === 'member') {
+                controls += `<button class="win-btn accent-btn" onclick="setMemberRole('${uin}', 'admin')">Сделать Админом</button>`;
+            } else if (role === 'admin' && myRole === 'owner') {
+                controls += `<button class="win-btn" onclick="setMemberRole('${uin}', 'member')">Снять Админа</button>`;
+            }
+            controls += `<button class="win-btn danger-btn" onclick="kickFromGroup('${uin}')">Исключить</button>`;
+        }
+
+        return `
+            <div class="found-row">
+                <div>
+                    <b>${escapeHtml(u.nickname)}</b> <small style="color:var(--text-muted)">(${uin})</small>
+                    ${getRoleBadgeHtml(role)}
+                </div>
+                <div style="display:flex; gap:4px;">${controls}</div>
+            </div>
+        `;
+    }).join('');
+}
+
+function setMemberRole(targetUin, newRole) {
+    const groups = getGroups();
+    const g = groups[activeTargetUin];
+    if (!g) return;
+
+    const myRole = getUserRoleInGroup(g.uin, currentUser.uin);
+    if (myRole !== 'owner' && myRole !== 'admin') return;
+
+    g.roles[targetUin] = newRole;
+    saveGroups(groups);
+    broadcastGroupSync(g);
+    renderGroupMembersModal();
+    renderMessages();
+}
+
+function kickFromGroup(targetUin) {
+    const groups = getGroups();
+    const g = groups[activeTargetUin];
+    if (!g || targetUin === g.owner) return;
+
+    delete g.roles[targetUin];
+    saveGroups(groups);
+    broadcastGroupSync(g);
+    renderGroupMembersModal();
+}
+
+function addMemberToActiveGroup() {
+    const uin = document.getElementById('addMemberUinInput').value.trim();
+    if (!uin || !activeTargetUin) return;
+
+    const groups = getGroups();
+    const g = groups[activeTargetUin];
+    if (!g) return;
+
+    if (!g.roles[uin]) {
+        g.roles[uin] = 'member';
+        saveGroups(groups);
+        broadcastGroupSync(g);
+    }
+    document.getElementById('addMemberUinInput').value = '';
+    renderGroupMembersModal();
+}
+
+// =====================================================================
+// 8. ПОИСК И ДОБАВЛЕНИЕ ДРУЗЕЙ И ГРУПП
+// =====================================================================
 function openFriendsModal() {
     document.getElementById('friendsModal').classList.add('open');
     document.getElementById('globalSearchInput').value = '';
@@ -747,37 +1192,52 @@ function closeFriendsModal() {
 function renderGlobalUsers() {
     const q = document.getElementById('globalSearchInput').value.trim().toLowerCase();
     const known = getKnownUsers();
-    const friends = getMyFriends();
+    const groups = getGroups();
+    const myList = getMyContactsAndGroups();
     const box = document.getElementById('globalResults');
 
-    const list = Object.values(known).filter(u =>
-        u.uin !== currentUser.uin && (!q || u.nickname.toLowerCase().includes(q) || u.uin.includes(q))
-    );
+    const items = [];
+    Object.values(groups).forEach(g => {
+        if (!q || g.nickname.toLowerCase().includes(q) || g.uin.toLowerCase().includes(q)) {
+            items.push({ uin: g.uin, nickname: `[Группа] ${g.nickname}`, status: 'online', isGroup: true });
+        }
+    });
+    Object.values(known).forEach(u => {
+        if (u.uin !== currentUser.uin && (!q || u.nickname.toLowerCase().includes(q) || u.uin.includes(q))) {
+            items.push(u);
+        }
+    });
 
-    if (list.length === 0) {
-        box.innerHTML = '<div style="padding:10px; color:var(--text-muted);">В списке никого не найдено. Если вы знаете UIN друга — нажмите кнопку <b>«+ По UIN»</b> справа от поиска!</div>';
+    if (items.length === 0) {
+        box.innerHTML = '<div style="padding:10px; color:var(--text-muted);">Никого не найдено. Введите точный UIN друга или ID группы (например, G12345) и нажмите <b>«+ Добавить ID»</b>!</div>';
         return;
     }
 
-    box.innerHTML = list.map(u => `
+    box.innerHTML = items.map(item => `
         <div class="found-row">
             <div style="display:flex; align-items:center; gap:7px;">
-                <span class="flower-icon ${u.status}"></span>
-                <b>${u.nickname}</b> <span style="color:var(--text-muted)">(UIN: ${u.uin})</span>
+                <span class="flower-icon ${item.status || 'online'}"></span>
+                <b>${escapeHtml(item.nickname)}</b> <span style="color:var(--text-muted)">(ID: ${item.uin})</span>
             </div>
-            ${friends.includes(u.uin)
-                ? `<button class="win-btn" disabled>✓ В друзьях</button>`
-                : `<button class="win-btn accent-btn" onclick="addFriend('${u.uin}')">+ Добавить</button>`
+            ${myList.includes(item.uin)
+                ? `<button class="win-btn" disabled>В списке</button>`
+                : `<button class="win-btn accent-btn" onclick="addContactOrGroup('${item.uin}')">+ Добавить</button>`
             }
         </div>
     `).join('');
 }
 
-function addFriend(uin) {
-    const friends = getMyFriends();
-    if (!friends.includes(uin)) {
-        friends.push(uin);
-        saveMyFriends(friends);
+function addContactOrGroup(id) {
+    const myList = getMyContactsAndGroups();
+    if (!myList.includes(id)) {
+        myList.push(id);
+        saveMyContactsAndGroups(myList);
+    }
+    const groups = getGroups();
+    if (groups[id] && !groups[id].roles[currentUser.uin]) {
+        groups[id].roles[currentUser.uin] = 'member';
+        saveGroups(groups);
+        broadcastGroupSync(groups[id]);
     }
     renderGlobalUsers();
     renderContacts();
@@ -786,24 +1246,26 @@ function addFriend(uin) {
 function addByExactUin() {
     const val = document.getElementById('globalSearchInput').value.trim();
     if (!val) return;
+    const groups = getGroups();
     const known = getKnownUsers();
-    if (!known[val]) {
-        saveKnownUser({ uin: val, nickname: `Игрок #${val}`, status: 'online' });
-    }
-    addFriend(val);
-    closeFriendsModal();
-    selectContact(val);
-}
 
-function removeFriend() {
-    if (!activeTargetUin || activeTargetUin === '000000') return;
-    const friends = getMyFriends().filter(id => id !== activeTargetUin);
-    saveMyFriends(friends);
-    activeTargetUin = null;
-    document.getElementById('msgInput').disabled = true;
-    document.getElementById('sendBtn').disabled = true;
-    renderContacts();
-    document.getElementById('messagesArea').innerHTML = '<div class="empty-chat-notice">Контакт удален из списка друзей.</div>';
+    if (val.toUpperCase().startsWith('G')) {
+        const gid = val.toUpperCase();
+        if (!groups[gid]) {
+            groups[gid] = { uin: gid, nickname: `Группа ${gid}`, isGroup: true, owner: "", roles: { [currentUser.uin]: 'member' } };
+            saveGroups(groups);
+        }
+        addContactOrGroup(gid);
+        closeFriendsModal();
+        selectContact(gid);
+    } else {
+        if (!known[val]) {
+            saveKnownUser({ uin: val, nickname: `Контакт #${val}`, status: 'online' });
+        }
+        addContactOrGroup(val);
+        closeFriendsModal();
+        selectContact(val);
+    }
 }
 
 function changeMyStatus(st) {
@@ -812,13 +1274,11 @@ function changeMyStatus(st) {
     announcePresence();
 }
 
-function toggleTheme() {
-    document.body.classList.toggle('warm-theme');
-}
+function toggleTheme() { document.body.classList.toggle('warm-theme'); }
 
-function insertSmiley(s) {
+function insertSmiley(code) {
     const inp = document.getElementById('msgInput');
-    if (!inp.disabled) { inp.value += ' ' + s + ' '; inp.focus(); }
+    if (!inp.disabled) { inp.value += ' ' + code + ' '; inp.focus(); }
 }
 
 // Звуковой движок QCI
@@ -864,7 +1324,6 @@ document.getElementById('msgInput').addEventListener('keydown', e => {
     else playSound('type');
 });
 
-// Автовход, если сессия уже открыта
 window.onload = () => {
     const saved = sessionStorage.getItem('qci_active_user');
     if (saved) loginSuccess(JSON.parse(saved));
