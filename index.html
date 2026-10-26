@@ -70,7 +70,7 @@
         }
         .win-btn:hover:not(:disabled) { filter: brightness(1.15); }
         .win-btn.accent-btn { background: #1b4d3e; color: #fff; }
-        .win-btn.danger-btn { background: #5c1d24; color: #fecdd3; }
+        .win-btn.danger-btn { background: #6b1d24; color: #fecdd3; }
         .win-btn:disabled { opacity: 0.45; cursor: default; }
 
         .inset-box {
@@ -87,6 +87,12 @@
         .role-owner { background: #b45309; color: #fef3c7; }
         .role-admin { background: #1d4ed8; color: #dbeafe; }
         .role-member { background: #374151; color: #d1d5db; }
+
+        /* ОТОБРАЖЕНИЕ ЛОГИНА СНИЗУ ПОД НИКОМ */
+        .user-stack { display: flex; flex-direction: column; line-height: 1.25; overflow: hidden; }
+        .user-nick-top { font-weight: bold; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .user-login-bottom { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .contact-item.active .user-login-bottom { color: #a7f3d0; }
 
         /* АВТОРИЗАЦИЯ */
         .auth-screen { width: 100vw; height: 100dvh; background: #141619; display: flex; justify-content: center; align-items: center; padding: 12px; }
@@ -107,15 +113,15 @@
 
         .mobile-back-btn { display: none; }
 
-        .my-info-bar { padding: 8px; background: var(--bg-panel); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+        .my-info-bar { padding: 8px 10px; background: var(--bg-panel); margin-bottom: 6px; display: flex; justify-content: space-between; align-items: center; gap: 8px; border: 1px solid var(--border-dark); }
         .cloud-status { font-size: 10px; padding: 2px 6px; background: #064e3b; color: #34d399; flex-shrink: 0; }
         .filter-input { width: 100%; padding: 7px 8px; margin-bottom: 6px; outline: none; }
         .contact-list { flex: 1; overflow-y: auto; padding: 6px; margin-bottom: 6px; }
         .group-title { font-weight: bold; color: #2ecc71; padding: 4px 2px; border-bottom: 1px dotted var(--border-light); margin: 6px 0 4px; font-size: 11px; }
-        .contact-item { display: flex; align-items: center; justify-content: space-between; padding: 8px; cursor: pointer; margin-bottom: 2px; }
+        .contact-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 8px; cursor: pointer; margin-bottom: 2px; }
         .contact-item:hover { background: var(--bg-hover); }
-        .contact-item.active { background: var(--bg-active); color: #fff; font-weight: bold; }
-        .contact-left { display: flex; align-items: center; gap: 7px; overflow: hidden; }
+        .contact-item.active { background: var(--bg-active); color: #fff; }
+        .contact-left { display: flex; align-items: center; gap: 8px; overflow: hidden; }
         .unread-counter { background: #e11d48; color: #fff; font-size: 10px; font-weight: bold; padding: 1px 6px; }
 
         .clist-bottom { display: flex; flex-direction: column; gap: 6px; }
@@ -125,7 +131,7 @@
         .status-bar select { flex: 1; padding: 5px; }
         .qci-brand { text-align: center; font-size: 11px; color: var(--text-muted); padding-top: 4px; }
 
-        .chat-user-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); padding: 7px 10px; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; }
+        .chat-user-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); padding: 7px 10px; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; border: 1px solid var(--border-dark); }
         .chat-user-actions { display: flex; gap: 6px; flex-wrap: wrap; }
         .messages-area { flex: 1; padding: 12px; overflow-y: auto; margin-bottom: 6px; user-select: text; }
         .empty-chat-notice { color: var(--text-muted); text-align: center; margin-top: 15%; line-height: 1.6; }
@@ -140,7 +146,7 @@
         .chat-toolbar { display: flex; align-items: center; gap: 8px; padding: 5px 8px; background: var(--bg-panel); margin-bottom: 6px; flex-wrap: wrap; }
         .sound-toggle { margin-left: auto; display: flex; align-items: center; gap: 5px; font-size: 11px; cursor: pointer; font-weight: bold; }
 
-        /* ПОЛЕ ВВОДА С КНОПКОЙ [+] И МЕНЮ ВЫБОРА ФОТО/ВИДЕО */
+        /* ПОЛЕ ВВОДА С КНОПКОЙ [+] */
         .input-row-box { display: flex; gap: 6px; align-items: stretch; margin-bottom: 4px; position: relative; }
         .plus-btn-wrap { position: relative; display: flex; }
         .media-attach-btn { width: 42px; font-size: 22px; font-weight: bold; padding: 0; flex-shrink: 0; }
@@ -156,16 +162,17 @@
         /* МОДАЛЬНЫЕ ОКНА */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.68); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; }
         .modal-overlay.open { display: flex; }
-        .modal-win { width: 100%; max-width: 460px; max-height: 90dvh; }
+        .modal-win { width: 100%; max-width: 460px; max-height: 92dvh; }
         .find-search-bar { display: flex; gap: 6px; margin-bottom: 8px; }
         .find-search-bar input { flex: 1; padding: 6px 8px; }
         .find-results { flex: 1; overflow-y: auto; padding: 6px; margin-bottom: 8px; min-height: 160px; }
         .found-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px dotted var(--border-light); gap: 6px; }
 
-        /* ЕДИНЫЙ БЛОК НАСТРОЕК */
+        /* ЕДИНЫЙ БЛОК НАСТРОЕК + КНОПКА УДАЛЕНИЯ АККАУНТА */
         .unified-settings { background: var(--bg-panel); padding: 12px; border: 1px solid var(--border-dark); display: flex; flex-direction: column; gap: 8px; }
         .field-row { display: flex; flex-direction: column; gap: 3px; }
         .field-row input, .field-row select { padding: 7px; outline: none; width: 100%; }
+        .danger-zone { margin-top: 6px; padding-top: 8px; border-top: 1px dashed #7f1d1d; display: flex; justify-content: space-between; align-items: center; }
 
         .toast-container { position: fixed; bottom: 18px; right: 18px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; max-width: 90vw; }
         .qci-toast { width: 300px; max-width: 100%; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.8); }
@@ -181,7 +188,7 @@
             .workspace-fullscreen.mobile-chat-active .chat-win { display: flex; }
             .mobile-back-btn { display: inline-flex !important; padding: 4px 10px; font-size: 12px; }
             .win-btn { padding: 8px 12px; }
-            .contact-item { padding: 11px 10px; }
+            .contact-item { padding: 10px; }
             .msg-media-img, .msg-media-video { max-width: 220px; }
         }
     </style>
@@ -213,8 +220,8 @@
 
             <!-- Вход -->
             <div class="auth-form" id="loginForm">
-                <label><b>Ваш Логин или номер UIN:</b></label>
-                <input type="text" id="loginId" class="inset-box" placeholder="Введите логин или UIN">
+                <label><b>Ваш уникальный Логин или UIN:</b></label>
+                <input type="text" id="loginId" class="inset-box" placeholder="Например: Parfen или UIN">
                 <label><b>Пароль:</b></label>
                 <input type="password" id="loginPass" class="inset-box" placeholder="Введите пароль">
                 <button type="button" class="win-btn accent-btn" onclick="handleLogin()" style="margin-top:4px;">Войти в QCI</button>
@@ -222,10 +229,10 @@
 
             <!-- Регистрация -->
             <div class="auth-form" id="regForm" style="display: none;">
-                <label><b>Придумайте Логин (для входа):</b></label>
-                <input type="text" id="regLogin" class="inset-box" placeholder="Латиница или цифры">
-                <label><b>Ваш Никнейм (видят все в чате):</b></label>
-                <input type="text" id="regNick" class="inset-box" placeholder="Отображаемое имя">
+                <label><b>Уникальный Логин (регистр не важен, только 1 в сети):</b></label>
+                <input type="text" id="regLogin" class="inset-box" placeholder="Например: Parfen">
+                <label><b>Отображаемый Никнейм (можно любой):</b></label>
+                <input type="text" id="regNick" class="inset-box" placeholder="Ваше имя в чате">
                 <label><b>Пароль:</b></label>
                 <input type="password" id="regPass" class="inset-box" placeholder="Минимум 3 символа">
                 <label><b>Повторите пароль:</b></label>
@@ -249,10 +256,12 @@
         </div>
         <div class="window-body">
             <div class="chat-user-bar">
-                <div>
-                    <strong id="targetTypeLabel">Чат:</strong> <span id="targetNick">Выберите контакт</span>
-                    &nbsp;|&nbsp; <strong>ID#:</strong> <span id="targetUin">---</span>
-                    <span id="myRoleBadgeArea"></span>
+                <div class="user-stack">
+                    <div>
+                        <strong id="targetTypeLabel">Чат:</strong> <span id="targetNick" style="font-weight:bold;">Выберите контакт</span>
+                        <span id="myRoleBadgeArea"></span>
+                    </div>
+                    <div class="user-login-bottom" id="targetSubInfo">Логин: --- | UIN: ---</div>
                 </div>
                 <div class="chat-user-actions">
                     <button type="button" class="win-btn accent-btn" id="rolesModalBtn" onclick="openRolesModal()" style="display:none;">Участники и роли</button>
@@ -276,7 +285,7 @@
 
             <div class="upload-progress" id="uploadProgress">⏳ Загрузка медиафайла...</div>
 
-            <!-- Зона ввода с кнопкой [+] и всплывающим выбором Фото / Видео -->
+            <!-- Зона ввода с кнопкой [+] -->
             <div class="input-row-box">
                 <div class="plus-btn-wrap">
                     <button type="button" class="win-btn media-attach-btn" id="plusBtn" onclick="toggleAttachMenu()" disabled title="Прикрепить Фото или Видео (до 50 МБ)">+</button>
@@ -301,11 +310,14 @@
             </div>
         </div>
         <div class="window-body">
+            <!-- Блок профиля: Ник сверху, уникальный @логин и UIN снизу! -->
             <div class="my-info-bar">
-                <div style="display:flex; align-items:center; gap:6px; overflow:hidden;">
+                <div style="display:flex; align-items:center; gap:8px; overflow:hidden;">
                     <span class="flower-icon online" id="myFlower"></span>
-                    <strong id="myNickDisplay">User</strong>
-                    <small id="myUinDisplay" style="color:var(--text-muted)"></small>
+                    <div class="user-stack">
+                        <span class="user-nick-top" id="myNickDisplay">User</span>
+                        <span class="user-login-bottom" id="myLoginBottomDisplay">@login • UIN: ---</span>
+                    </div>
                 </div>
                 <span class="cloud-status" id="cloudIndicator">Online</span>
             </div>
@@ -327,13 +339,13 @@
                         <option value="offline">Невидимый (Offline)</option>
                     </select>
                 </div>
-                <div class="qci-brand">QCI • Permanent Accounts Storage</div>
+                <div class="qci-brand">QCI • Unique Login & Non-Drop Session</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 3. ЕДИНОЕ ОКНО НАСТРОЕК -->
+<!-- 3. ЕДИНОЕ ОКНО НАСТРОЕК + УДАЛЕНИЕ АККАУНТА -->
 <div class="modal-overlay" id="settingsModal">
     <div class="qci-window modal-win">
         <div class="title-bar">
@@ -343,11 +355,11 @@
         <div class="window-body" style="overflow-y: auto;">
             <div class="unified-settings">
                 <div class="field-row">
-                    <label><b>Логин (для входа):</b></label>
+                    <label><b>Уникальный Логин (отображается снизу как @логин):</b></label>
                     <input type="text" id="setLoginInput" class="inset-box">
                 </div>
                 <div class="field-row">
-                    <label><b>Никнейм (видят все в чате):</b></label>
+                    <label><b>Никнейм (отображается сверху):</b></label>
                     <input type="text" id="setNickInput" class="inset-box">
                 </div>
                 <div class="field-row">
@@ -383,9 +395,15 @@
 
                 <div id="settingsStatusMsg" style="color:#4ade80; font-size:11.5px; min-height:15px; font-weight:bold;"></div>
 
-                <div style="display:flex; justify-content:space-between; gap:8px; margin-top:4px;">
+                <div style="display:flex; justify-content:space-between; gap:8px; margin-top:2px;">
                     <button type="button" class="win-btn accent-btn" style="flex:1;" onclick="saveAllSettings()">💾 Сохранить изменения</button>
                     <button type="button" class="win-btn" onclick="closeSettingsModal()">Закрыть</button>
+                </div>
+
+                <!-- Зона удаления аккаунта -->
+                <div class="danger-zone">
+                    <span style="font-size:11px; color:var(--text-muted);">Опасная зона:</span>
+                    <button type="button" class="win-btn danger-btn" onclick="deleteMyAccount()">🗑 Удалить аккаунт навсегда</button>
                 </div>
             </div>
         </div>
@@ -401,7 +419,7 @@
         </div>
         <div class="window-body">
             <div class="find-search-bar">
-                <input type="text" id="globalSearchInput" class="inset-box" placeholder="Введите ник, UIN или ID группы..." oninput="renderGlobalUsers()">
+                <input type="text" id="globalSearchInput" class="inset-box" placeholder="Введите @логин, ник, UIN или ID группы..." oninput="renderGlobalUsers()">
                 <button type="button" class="win-btn accent-btn" onclick="addByExactUin()">+ По ID</button>
             </div>
             <div class="find-results inset-box" id="globalResults"></div>
@@ -451,20 +469,21 @@
 
 <script>
 // =====================================================================
-// 1. ВЕЧНОЕ ХРАНИЛИЩЕ АККАУНТОВ + АВТО-МИГРАЦИЯ ИЗ ВСЕХ СТАРЫХ ВЕРСИЙ!
+// 1. ПОСТОЯННОЕ ХРАНИЛИЩЕ И НЕВЫЛЕТАЮЩАЯ СЕССИЯ В LOCALSTORAGE
 // =====================================================================
 const STORAGE_KEYS = {
     ACCOUNTS: 'qci_permanent_accounts',
     USERS: 'qci_permanent_users',
     GROUPS: 'qci_permanent_groups',
-    SESSION: 'qci_permanent_session',
+    SESSION: 'qci_permanent_session_persist',
+    LAST_CHAT: 'qci_permanent_last_chat',
     THEME: 'qci_permanent_theme',
     FONT: 'qci_permanent_font',
     FONTSIZE: 'qci_permanent_fontsize',
     CUSTOM_FONT: 'qci_permanent_custom_font'
 };
 
-// Собираем и сохраняем все аккаунты из предыдущих версий (v4..v12), чтобы ничего никогда не пропадало!
+// Авто-миграция + дедупликация логинов без учёта регистра (например, Parfen и parfen)
 function migrateOldData() {
     let permAcc = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACCOUNTS) || '{}');
     let permUsers = JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '{}');
@@ -476,27 +495,58 @@ function migrateOldData() {
             const data = JSON.parse(localStorage.getItem(k) || '{}');
             for (const [uin, acc] of Object.entries(data)) {
                 if (!permAcc[uin]) permAcc[uin] = acc;
-                if (!permUsers[uin]) permUsers[uin] = { uin: acc.uin, nickname: acc.nickname, status: acc.status || 'online' };
             }
         } catch (e) {}
     });
 
-    const oldGroupKeys = ['qci_groups_v3', 'qci_groups_v4', 'qci_groups_v5', 'qci_groups_v6', 'qci_groups_v8', 'qci_groups_v9', 'qci_groups_v10', 'qci_groups_v11', 'qci_groups_v12'];
-    oldGroupKeys.forEach(k => {
-        try {
-            const data = JSON.parse(localStorage.getItem(k) || '{}');
-            for (const [gid, g] of Object.entries(data)) {
-                if (gid !== '000000' && !permGroups[gid]) permGroups[gid] = g;
-            }
-        } catch (e) {}
-    });
+    // Оставляем только первый созданный аккаунт для каждого уникального логина (case-insensitive)
+    const seenLogins = new Set();
+    const cleanedAcc = {};
+    for (const [uin, acc] of Object.entries(permAcc)) {
+        const rawLogin = (acc.login || acc.nickname || ('user' + uin)).trim();
+        const lowerLogin = rawLogin.toLowerCase();
+        if (!seenLogins.has(lowerLogin)) {
+            seenLogins.add(lowerLogin);
+            acc.login = rawLogin;
+            cleanedAcc[uin] = acc;
+            permUsers[uin] = { uin: acc.uin, login: acc.login, nickname: acc.nickname, status: acc.status || 'online' };
+        }
+    }
 
-    // Навсегда удаляем стандартную общую группу 000000
     delete permGroups['000000'];
 
-    localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(permAcc));
+    localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(cleanedAcc));
     localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(permUsers));
     localStorage.setItem(STORAGE_KEYS.GROUPS, JSON.stringify(permGroups));
+
+    // Переносим старую сессию из sessionStorage в localStorage, чтобы сайт не вылетал при обновлении
+    if (!localStorage.getItem(STORAGE_KEYS.SESSION)) {
+        const oldSes = sessionStorage.getItem('qci_permanent_session') || sessionStorage.getItem('qci_active_user_v12');
+        if (oldSes) localStorage.setItem(STORAGE_KEYS.SESSION, oldSes);
+    }
+}
+
+// СТРОГАЯ ПРОВЕРКА ЗАНЯТОСТИ ЛОГИНА (Parfen == parfen == PARFEN)
+function isLoginTakenAnywhere(loginStr, excludeUin = null) {
+    const target = loginStr.trim().toLowerCase();
+    if (!target) return true;
+
+    const accounts = getAccounts();
+    for (const u of Object.values(accounts)) {
+        if (u.uin !== excludeUin) {
+            const existing = (u.login || u.nickname || '').trim().toLowerCase();
+            if (existing === target) return true;
+        }
+    }
+
+    const known = getKnownUsers();
+    for (const u of Object.values(known)) {
+        if (u.uin !== excludeUin) {
+            const existing = (u.login || '').trim().toLowerCase();
+            if (existing === target) return true;
+        }
+    }
+    return false;
 }
 
 let dbInstance = null;
@@ -625,7 +675,7 @@ function renderTextWithPngSmileys(text) {
 }
 
 // =====================================================================
-// 3. АККАУНТЫ, ГРУППЫ (БЕЗ ОБЩЕГО ЧАТА) И МЕДИА ДО 50 МБ
+// 3. ДАННЫЕ ПОЛЬЗОВАТЕЛЕЙ, УДАЛЕНИЕ АККАУНТА И МЕДИА
 // =====================================================================
 let currentUser = null;
 let activeTargetUin = null;
@@ -640,8 +690,26 @@ function saveAccounts(acc) { localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.st
 function getKnownUsers() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.USERS) || '{}'); }
 function saveKnownUser(u) {
     if (!u || !u.uin) return;
-    const saved = getKnownUsers(); saved[u.uin] = u;
+    const saved = getKnownUsers();
+    saved[u.uin] = {
+        uin: u.uin,
+        login: u.login || saved[u.uin]?.login || ('user' + u.uin),
+        nickname: u.nickname,
+        status: u.status || 'online'
+    };
     localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(saved));
+}
+
+function removeUserEverywhere(uin) {
+    const accounts = getAccounts();
+    delete accounts[uin];
+    saveAccounts(accounts);
+
+    const known = getKnownUsers();
+    delete known[uin];
+    localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(known));
+
+    localStorage.removeItem('qci_permanent_clist_' + uin);
 }
 
 function getGroups() {
@@ -662,9 +730,7 @@ function getMyContactsAndGroups() {
     const key = 'qci_permanent_clist_' + currentUser.uin;
     let list = JSON.parse(localStorage.getItem(key) || 'null');
     if (!list) {
-        // Пытаемся подтянуть старый список друзей пользователя, если он был
-        const oldClist = JSON.parse(localStorage.getItem('qci_clist_v12_' + currentUser.uin) || localStorage.getItem('qci_clist_v11_' + currentUser.uin) || '[]');
-        list = oldClist.filter(id => id !== '000000');
+        list = [];
         localStorage.setItem(key, JSON.stringify(list));
     } else {
         list = list.filter(id => id !== '000000');
@@ -715,7 +781,7 @@ function handleMediaFile(input, mediaType) {
     const file = input.files[0];
     if (!file || !activeTargetUin) return;
 
-    const MAX_BYTES = 50 * 1024 * 1024; // 50 МБ
+    const MAX_BYTES = 50 * 1024 * 1024;
     if (file.size > MAX_BYTES) {
         alert('Файл превышает лимит 50 МБ! Размер выбранного файла: ' + (file.size / (1024*1024)).toFixed(1) + ' МБ.');
         input.value = '';
@@ -732,6 +798,7 @@ function handleMediaFile(input, mediaType) {
         const msgObj = {
             id: Date.now() + Math.floor(Math.random() * 10000),
             sender_uin: currentUser.uin,
+            sender_login: currentUser.login,
             sender_nick: currentUser.nickname,
             receiver_uin: activeTargetUin,
             content: dataUrl,
@@ -774,7 +841,7 @@ async function broadcastLargeMessage(msgObj, progElem) {
 }
 
 // =====================================================================
-// 4. ЕДИНЫЕ НАСТРОЙКИ ПРОФИЛЯ И ВНЕШНЕГО ВИДА
+// 4. НАСТРОЙКИ И ПОЛНОЕ УДАЛЕНИЕ АККАУНТА
 // =====================================================================
 function openSettingsModal() {
     if (!currentUser) return;
@@ -799,31 +866,44 @@ function saveAllSettings() {
         msg.style.color = '#f87171'; msg.innerText = 'Логин и Никнейм должны быть от 2 символов!'; return;
     }
 
-    const accounts = getAccounts();
-    for (const u of Object.values(accounts)) {
-        if (u.uin !== currentUser.uin && (u.login || '').toLowerCase() === newLogin.toLowerCase()) {
-            msg.style.color = '#f87171'; msg.innerText = 'Этот логин уже занят!'; return;
-        }
+    if (isLoginTakenAnywhere(newLogin, currentUser.uin)) {
+        msg.style.color = '#f87171';
+        msg.innerText = 'Логин "' + newLogin + '" уже занят! Такой логин может быть только один.';
+        return;
     }
 
     currentUser.login = newLogin;
     currentUser.nickname = newNick;
     if (newPass.length >= 3) currentUser.password = newPass;
 
+    const accounts = getAccounts();
     accounts[currentUser.uin] = currentUser;
     saveAccounts(accounts);
-    sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(currentUser));
-    saveKnownUser({ uin: currentUser.uin, nickname: currentUser.nickname, status: currentUser.status || 'online' });
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(currentUser));
+    saveKnownUser({ uin: currentUser.uin, login: currentUser.login, nickname: currentUser.nickname, status: currentUser.status || 'online' });
 
-    document.getElementById('myNickDisplay').innerText = currentUser.nickname;
-    document.getElementById('myTitleBar').innerHTML = '<span class="flower-icon online"></span> QCI ' + currentUser.uin + ' - ' + escapeHtml(currentUser.nickname);
-
+    updateMyProfileUI();
     announcePresence();
     renderContacts();
     if (activeTargetUin) renderMessages();
 
     msg.style.color = '#4ade80';
     msg.innerText = '✓ Все настройки сохранены!';
+}
+
+function deleteMyAccount() {
+    if (!currentUser) return;
+    const ok = confirm('Вы уверены, что хотите навсегда удалить свой аккаунт (@' + currentUser.login + ')? Это действие нельзя отменить.');
+    if (!ok) return;
+
+    const deletedUin = currentUser.uin;
+    removeUserEverywhere(deletedUin);
+    emitRealtimeEvent({ type: 'delete_account', uin: deletedUin });
+
+    localStorage.removeItem(STORAGE_KEYS.SESSION);
+    localStorage.removeItem(STORAGE_KEYS.LAST_CHAT);
+    currentUser = null;
+    location.reload();
 }
 
 function applyThemeSetting(theme) {
@@ -893,7 +973,7 @@ async function restoreAppearanceSettings() {
 }
 
 // =====================================================================
-// 5. АВТОРИЗАЦИЯ И РЕАЛТАЙМ
+// 5. АВТОРИЗАЦИЯ С ПРОВЕРКОЙ УНИКАЛЬНОСТИ ЛОГИНА (Parfen != parfen)
 // =====================================================================
 function switchAuthTab(mode) {
     document.getElementById('authError').innerText = '';
@@ -910,22 +990,24 @@ function handleRegister() {
     const pass2 = document.getElementById('regPass2').value.trim();
     const err = document.getElementById('authError');
 
-    if (login.length < 2) { err.innerText = 'Введите логин!'; return; }
-    if (nick.length < 2) { err.innerText = 'Введите никнейм!'; return; }
+    if (login.length < 2) { err.innerText = 'Введите логин (от 2 символов)!'; return; }
+    if (nick.length < 2) { err.innerText = 'Введите отображаемый никнейм!'; return; }
     if (pass.length < 3) { err.innerText = 'Пароль от 3 символов!'; return; }
     if (pass !== pass2) { err.innerText = 'Пароли не совпадают!'; return; }
 
-    const accounts = getAccounts();
-    for (const u of Object.values(accounts)) {
-        if ((u.login || '').toLowerCase() === login.toLowerCase()) { err.innerText = 'Логин занят!'; return; }
+    // Строгий запрет на создание второго логина Parfen / parfen / PARFEN
+    if (isLoginTakenAnywhere(login)) {
+        err.innerText = 'Логин "' + login + '" уже существует! Создать второй такой же нельзя.';
+        return;
     }
 
     const newUin = String(Math.floor(100000 + Math.random() * 899999));
     const newUser = { uin: newUin, login: login, nickname: nick, password: pass, status: 'online' };
+    const accounts = getAccounts();
     accounts[newUin] = newUser;
     saveAccounts(accounts);
-    saveKnownUser({ uin: newUin, nickname: nick, status: 'online' });
-    loginSuccess(newUser);
+    saveKnownUser({ uin: newUin, login: login, nickname: nick, status: 'online' });
+    loginSuccess(newUser, true);
 }
 
 function handleLogin() {
@@ -936,34 +1018,51 @@ function handleLogin() {
     const accounts = getAccounts();
     let found = null;
     for (const u of Object.values(accounts)) {
-        if (u.uin === id || (u.login && u.login.toLowerCase() === id.toLowerCase()) || u.nickname.toLowerCase() === id.toLowerCase()) {
+        if (u.uin === id || (u.login && u.login.toLowerCase() === id.toLowerCase())) {
             found = u; break;
         }
     }
-    if (!found) { err.innerText = 'Аккаунт не найден!'; return; }
+    if (!found) { err.innerText = 'Аккаунт с таким логином или UIN не найден!'; return; }
     if (found.password !== pass) { err.innerText = 'Неверный пароль!'; return; }
-    loginSuccess(found);
+    loginSuccess(found, true);
 }
 
-function loginSuccess(user) {
+function updateMyProfileUI() {
+    if (!currentUser) return;
+    document.getElementById('myNickDisplay').innerText = currentUser.nickname;
+    document.getElementById('myLoginBottomDisplay').innerText = '@' + (currentUser.login || currentUser.nickname) + ' • UIN: ' + currentUser.uin;
+    document.getElementById('myTitleBar').innerHTML = '<span class="flower-icon online"></span> QCI — ' + escapeHtml(currentUser.nickname);
+}
+
+function loginSuccess(user, playHorn = false) {
+    // Синхронизируем с актуальной записью в аккаунтах
+    const accounts = getAccounts();
+    if (accounts[user.uin]) user = accounts[user.uin];
+    if (!user.login) user.login = user.nickname;
+
     currentUser = user;
-    sessionStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(user));
-    saveKnownUser({ uin: user.uin, nickname: user.nickname, status: user.status || 'online' });
+    localStorage.setItem(STORAGE_KEYS.SESSION, JSON.stringify(user));
+    saveKnownUser({ uin: user.uin, login: user.login, nickname: user.nickname, status: user.status || 'online' });
 
     document.getElementById('authScreen').style.display = 'none';
     document.getElementById('appScreen').style.display = 'flex';
-    document.getElementById('myNickDisplay').innerText = user.nickname;
-    document.getElementById('myUinDisplay').innerText = '(#' + user.uin + ')';
-    document.getElementById('myTitleBar').innerHTML = '<span class="flower-icon online"></span> QCI ' + user.uin + ' - ' + escapeHtml(user.nickname);
+    updateMyProfileUI();
 
     initPngSmileys();
-    playSound('horn');
+    if (playHorn) playSound('horn');
     renderContacts();
     setupRealtimeSync();
+
+    // Восстанавливаем последний открытый чат после обновления страницы или кода
+    const lastChat = localStorage.getItem(STORAGE_KEYS.LAST_CHAT);
+    if (lastChat && getMyContactsAndGroups().includes(lastChat)) {
+        selectContact(lastChat, true);
+    }
 }
 
 function logout() {
-    sessionStorage.removeItem(STORAGE_KEYS.SESSION);
+    localStorage.removeItem(STORAGE_KEYS.SESSION);
+    localStorage.removeItem(STORAGE_KEYS.LAST_CHAT);
     location.reload();
 }
 
@@ -971,7 +1070,7 @@ function showIncomingNotification(msgObj) {
     playSound('uhoh');
     const isGroup = Boolean(getGroups()[msgObj.receiver_uin]);
     const chatTargetId = isGroup ? msgObj.receiver_uin : msgObj.sender_uin;
-    const headerTitle = isGroup ? '[Группа] ' + msgObj.sender_nick : 'Сообщение от ' + msgObj.sender_nick;
+    const headerTitle = isGroup ? '[Группа] ' + msgObj.sender_nick : msgObj.sender_nick + ' (@' + (msgObj.sender_login || msgObj.sender_uin) + ')';
     const preview = msgObj.mediaType === 'image' ? '🖼 Фотография' : (msgObj.mediaType === 'video' ? '🎬 Видеофайл' : renderTextWithPngSmileys(msgObj.content));
 
     const container = document.getElementById('toastContainer');
@@ -987,6 +1086,14 @@ function showIncomingNotification(msgObj) {
 
 function processIncomingEvent(packet) {
     if (!currentUser || !packet) return;
+
+    if (packet.type === 'delete_account') {
+        removeUserEverywhere(packet.uin);
+        saveMyContactsAndGroups(getMyContactsAndGroups().filter(id => id !== packet.uin));
+        if (activeTargetUin === packet.uin) leaveOrRemoveCurrent();
+        else renderContacts();
+        return;
+    }
 
     if (packet.type === 'msg_chunk') {
         if (!incomingChunks[packet.transferId]) {
@@ -1032,7 +1139,7 @@ function processIncomingEvent(packet) {
     } else if (packet.type === 'new_msg') {
         const msg = packet.msg;
         if (msg.sender_uin === currentUser.uin || msg.receiver_uin === '000000') return;
-        saveKnownUser({ uin: msg.sender_uin, nickname: msg.sender_nick, status: 'online' });
+        saveKnownUser({ uin: msg.sender_uin, login: msg.sender_login, nickname: msg.sender_nick, status: 'online' });
 
         const isGroupMsg = Boolean(getGroups()[msg.receiver_uin]);
         const myList = getMyContactsAndGroups();
@@ -1062,7 +1169,7 @@ function emitRealtimeEvent(packet) {
 
 function setupRealtimeSync() {
     if (localChannel) localChannel.onmessage = (ev) => processIncomingEvent(ev.data);
-    if (typeof mqtt !== 'undefined') {
+    if (typeof mqtt !== 'undefined' && !mqttClient) {
         mqttClient = mqtt.connect('wss://broker.emqx.io:8084/mqtt');
         mqttClient.on('connect', () => {
             mqttClient.subscribe(TOPIC_PREFIX + 'bus');
@@ -1077,11 +1184,14 @@ function setupRealtimeSync() {
 
 function announcePresence() {
     if (!currentUser) return;
-    emitRealtimeEvent({ type: 'presence', user: { uin: currentUser.uin, nickname: currentUser.nickname, status: currentUser.status || 'online' } });
+    emitRealtimeEvent({
+        type: 'presence',
+        user: { uin: currentUser.uin, login: currentUser.login, nickname: currentUser.nickname, status: currentUser.status || 'online' }
+    });
 }
 
 // =====================================================================
-// 6. КОНТАКТЫ И ЧАТ
+// 6. КОНТАКТЫ (С ЛОГИНОМ СНИЗУ) И ЧАТ
 // =====================================================================
 function closeMobileChat() {
     document.getElementById('appScreen').classList.remove('mobile-chat-active');
@@ -1102,8 +1212,10 @@ function renderContacts() {
         if (groups[id]) {
             if (!filter || groups[id].nickname.toLowerCase().includes(filter)) groupItems.push(groups[id]);
         } else if (id !== currentUser.uin) {
-            const u = known[id] || { uin: id, nickname: 'Контакт #' + id, status: 'online' };
-            if (!filter || u.nickname.toLowerCase().includes(filter) || u.uin.includes(filter)) friendItems.push(u);
+            const u = known[id] || { uin: id, login: 'user' + id, nickname: 'Контакт #' + id, status: 'online' };
+            if (!filter || u.nickname.toLowerCase().includes(filter) || (u.login || '').toLowerCase().includes(filter) || u.uin.includes(filter)) {
+                friendItems.push(u);
+            }
         }
     });
 
@@ -1116,7 +1228,9 @@ function renderContacts() {
         const div = document.createElement('div');
         div.className = 'contact-item' + (activeTargetUin === g.uin ? ' active' : '');
         div.onclick = () => selectContact(g.uin);
-        div.innerHTML = '<div class="contact-left"><span class="flower-icon online"></span><span><b>[Группа]</b> ' + escapeHtml(g.nickname) + '</span></div>' +
+        div.innerHTML = '<div class="contact-left"><span class="flower-icon online"></span>' +
+            '<div class="user-stack"><span class="user-nick-top">[Группа] ' + escapeHtml(g.nickname) + '</span>' +
+            '<span class="user-login-bottom">ID: ' + g.uin + '</span></div></div>' +
             '<div>' + (unread > 0 ? '<span class="unread-counter">+' + unread + '</span>' : '') + getRoleBadgeHtml(myRole) + '</div>';
         container.appendChild(div);
     });
@@ -1126,21 +1240,27 @@ function renderContacts() {
 
     friendItems.forEach(u => {
         const unread = unreadCounts[u.uin] || 0;
+        const loginText = u.login || ('user' + u.uin);
         const div = document.createElement('div');
         div.className = 'contact-item' + (activeTargetUin === u.uin ? ' active' : '');
         div.onclick = () => selectContact(u.uin);
-        div.innerHTML = '<div class="contact-left"><span class="flower-icon ' + (u.status || 'online') + '"></span><span>' + escapeHtml(u.nickname) + ' <small>(' + u.uin + ')</small></span></div>' +
+        div.innerHTML = '<div class="contact-left"><span class="flower-icon ' + (u.status || 'online') + '"></span>' +
+            '<div class="user-stack"><span class="user-nick-top">' + escapeHtml(u.nickname) + '</span>' +
+            '<span class="user-login-bottom">@' + escapeHtml(loginText) + ' • UIN: ' + u.uin + '</span></div></div>' +
             (unread > 0 ? '<span class="unread-counter">+' + unread + '</span>' : '');
         container.appendChild(div);
     });
 }
 
-function selectContact(id) {
+function selectContact(id, isRestore = false) {
     activeTargetUin = id;
     unreadCounts[id] = 0;
+    localStorage.setItem(STORAGE_KEYS.LAST_CHAT, id);
     updateActiveHeader();
 
-    document.getElementById('appScreen').classList.add('mobile-chat-active');
+    if (!isRestore) {
+        document.getElementById('appScreen').classList.add('mobile-chat-active');
+    }
 
     const msgInput = document.getElementById('msgInput');
     msgInput.disabled = false;
@@ -1169,17 +1289,18 @@ function updateActiveHeader() {
         const myRole = getUserRoleInGroup(g.uin, currentUser.uin);
         document.getElementById('targetTypeLabel').innerText = 'Группа:';
         document.getElementById('targetNick').innerText = g.nickname;
-        document.getElementById('targetUin').innerText = g.uin;
+        document.getElementById('targetSubInfo').innerText = 'ID группы: ' + g.uin;
         document.getElementById('chatTitle').innerText = 'Группа: ' + g.nickname;
-        badgeArea.innerHTML = '&nbsp;|&nbsp; Роль: ' + getRoleBadgeHtml(myRole);
+        badgeArea.innerHTML = '&nbsp;' + getRoleBadgeHtml(myRole);
         rolesBtn.style.display = 'inline-flex';
         leaveBtn.innerText = 'Покинуть группу';
     } else {
-        const u = known[activeTargetUin] || { uin: activeTargetUin, nickname: 'Контакт #' + activeTargetUin, status: 'online' };
+        const u = known[activeTargetUin] || { uin: activeTargetUin, login: 'user' + activeTargetUin, nickname: 'Контакт #' + activeTargetUin, status: 'online' };
+        const loginStr = u.login || ('user' + u.uin);
         document.getElementById('targetTypeLabel').innerText = 'Собеседник:';
         document.getElementById('targetNick').innerText = u.nickname;
-        document.getElementById('targetUin').innerText = u.uin;
-        document.getElementById('chatTitle').innerText = u.nickname + ' (#' + u.uin + ')';
+        document.getElementById('targetSubInfo').innerText = 'Логин: @' + loginStr + ' • UIN: ' + u.uin;
+        document.getElementById('chatTitle').innerText = u.nickname + ' (@' + loginStr + ')';
         badgeArea.innerHTML = '';
         rolesBtn.style.display = 'none';
         leaveBtn.innerText = 'Удалить друга';
@@ -1208,6 +1329,7 @@ function renderMessages() {
     chatMsgs.forEach(m => {
         const isMe = m.sender_uin === currentUser.uin;
         const displayNick = isMe ? currentUser.nickname : (known[m.sender_uin]?.nickname || m.sender_nick);
+        const displayLogin = isMe ? currentUser.login : (known[m.sender_uin]?.login || m.sender_login || ('user' + m.sender_uin));
         const roleTag = isGroup ? getRoleBadgeHtml(getUserRoleInGroup(activeTargetUin, m.sender_uin)) : '';
 
         const row = document.createElement('div');
@@ -1216,7 +1338,7 @@ function renderMessages() {
         const block = document.createElement('div');
         block.className = 'msg-content-block';
         block.innerHTML = '<div class="' + (isMe ? 'msg-header-me' : 'msg-header-other') + '">' +
-            escapeHtml(displayNick) + ' ' + roleTag + ' <span>[' + m.timestamp + ']</span>:</div>';
+            escapeHtml(displayNick) + ' <small style="opacity:0.75;">(@' + escapeHtml(displayLogin) + ')</small> ' + roleTag + ' <span>[' + m.timestamp + ']</span>:</div>';
 
         const bodyDiv = document.createElement('div');
         bodyDiv.className = 'msg-text';
@@ -1263,6 +1385,7 @@ function sendMessage() {
     const msgObj = {
         id: Date.now() + Math.floor(Math.random() * 10000),
         sender_uin: currentUser.uin,
+        sender_login: currentUser.login,
         sender_nick: currentUser.nickname,
         receiver_uin: activeTargetUin,
         content: text,
@@ -1303,9 +1426,10 @@ function leaveOrRemoveCurrent() {
     }
 
     activeTargetUin = null;
+    localStorage.removeItem(STORAGE_KEYS.LAST_CHAT);
     closeMobileChat();
     document.getElementById('targetNick').innerText = 'Выберите контакт';
-    document.getElementById('targetUin').innerText = '---';
+    document.getElementById('targetSubInfo').innerText = 'Логин: --- | UIN: ---';
     document.getElementById('myRoleBadgeArea').innerHTML = '';
     document.getElementById('rolesModalBtn').style.display = 'none';
     document.getElementById('msgInput').disabled = true;
@@ -1354,12 +1478,13 @@ function renderGroupMembersModal() {
     container.innerHTML = '';
 
     Object.keys(g.roles || {}).forEach(uin => {
-        const u = (uin === currentUser.uin) ? currentUser : (known[uin] || { uin, nickname: 'Пользователь #' + uin });
+        const u = (uin === currentUser.uin) ? currentUser : (known[uin] || { uin, login: 'user' + uin, nickname: 'Пользователь #' + uin });
         const role = getUserRoleInGroup(g.uin, uin);
 
         const row = document.createElement('div');
         row.className = 'found-row';
-        row.innerHTML = '<div><b>' + escapeHtml(u.nickname) + '</b> <small>(' + uin + ')</small> ' + getRoleBadgeHtml(role) + '</div>';
+        row.innerHTML = '<div class="user-stack"><span class="user-nick-top">' + escapeHtml(u.nickname) + ' ' + getRoleBadgeHtml(role) + '</span>' +
+            '<span class="user-login-bottom">@' + escapeHtml(u.login || ('user'+uin)) + ' • UIN: ' + uin + '</span></div>';
 
         const btnBox = document.createElement('div');
         btnBox.style.cssText = 'display:flex; gap:4px;';
@@ -1416,8 +1541,16 @@ function renderGlobalUsers() {
     const q = document.getElementById('globalSearchInput').value.trim().toLowerCase();
     const known = getKnownUsers(); const groups = getGroups(); const myList = getMyContactsAndGroups();
     const items = [];
-    Object.values(groups).forEach(g => { if (g.uin !== '000000' && (!q || g.nickname.toLowerCase().includes(q) || g.uin.toLowerCase().includes(q))) items.push({ uin: g.uin, nickname: '[Группа] ' + g.nickname }); });
-    Object.values(known).forEach(u => { if (u.uin !== currentUser.uin && (!q || u.nickname.toLowerCase().includes(q) || u.uin.includes(q))) items.push(u); });
+    Object.values(groups).forEach(g => {
+        if (g.uin !== '000000' && (!q || g.nickname.toLowerCase().includes(q) || g.uin.toLowerCase().includes(q))) {
+            items.push({ uin: g.uin, login: 'group', nickname: '[Группа] ' + g.nickname, isGroup: true });
+        }
+    });
+    Object.values(known).forEach(u => {
+        if (u.uin !== currentUser.uin && (!q || u.nickname.toLowerCase().includes(q) || (u.login || '').toLowerCase().includes(q) || u.uin.includes(q))) {
+            items.push(u);
+        }
+    });
 
     const box = document.getElementById('globalResults');
     box.innerHTML = '';
@@ -1429,7 +1562,9 @@ function renderGlobalUsers() {
     items.forEach(item => {
         const row = document.createElement('div');
         row.className = 'found-row';
-        row.innerHTML = '<div><b>' + escapeHtml(item.nickname) + '</b> <small>(' + item.uin + ')</small></div>';
+        const sub = item.isGroup ? ('ID группы: ' + item.uin) : ('@' + (item.login || ('user' + item.uin)) + ' • UIN: ' + item.uin);
+        row.innerHTML = '<div class="user-stack"><span class="user-nick-top">' + escapeHtml(item.nickname) + '</span>' +
+            '<span class="user-login-bottom">' + escapeHtml(sub) + '</span></div>';
 
         const btn = document.createElement('button');
         if (myList.includes(item.uin)) {
@@ -1463,7 +1598,7 @@ function addByExactUin() {
         if (!groups[gid]) { groups[gid] = { uin: gid, nickname: 'Группа ' + gid, isGroup: true, owner: '', roles: { [currentUser.uin]: 'member' } }; saveGroups(groups); }
         addContactOrGroup(gid); closeFriendsModal(); selectContact(gid);
     } else {
-        if (!known[val]) saveKnownUser({ uin: val, nickname: 'Пользователь #' + val, status: 'online' });
+        if (!known[val]) saveKnownUser({ uin: val, login: 'user' + val, nickname: 'Пользователь #' + val, status: 'online' });
         addContactOrGroup(val); closeFriendsModal(); selectContact(val);
     }
 }
@@ -1503,8 +1638,13 @@ window.onload = async () => {
     await initIndexedDB();
     await restoreAppearanceSettings();
     initPngSmileys();
-    const saved = sessionStorage.getItem(STORAGE_KEYS.SESSION);
-    if (saved) { try { loginSuccess(JSON.parse(saved)); } catch (e) {} }
+    const saved = localStorage.getItem(STORAGE_KEYS.SESSION);
+    if (saved) {
+        try {
+            const parsed = JSON.parse(saved);
+            if (getAccounts()[parsed.uin]) loginSuccess(parsed, false);
+        } catch (e) {}
+    }
 };
 </script>
 </body>
