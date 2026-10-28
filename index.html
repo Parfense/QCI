@@ -53,13 +53,32 @@
         .window-body { padding: 10px; flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 
         .flower-icon, .big-flower {
-            display: inline-block; width: 16px; height: 16px; flex-shrink: 0; background-size: contain; background-repeat: no-repeat;
+            display: inline-block; width: 15px; height: 15px; flex-shrink: 0; background-size: contain; background-repeat: no-repeat;
             background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><circle cx='16' cy='6' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='25' cy='11' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='25' cy='21' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='16' cy='26' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='7' cy='21' r='5' fill='%23e74c3c' stroke='%23000' stroke-width='1.5'/><circle cx='7' cy='11' r='5' fill='%232ecc71' stroke='%23000' stroke-width='1.5'/><circle cx='16' cy='16' r='4' fill='%23f1c40f' stroke='%23000' stroke-width='1.5'/></svg>");
         }
         .big-flower { width: 48px; height: 48px; }
         .flower-icon.away { filter: hue-rotate(-40deg); }
         .flower-icon.dnd { filter: hue-rotate(-110deg); }
         .flower-icon.offline { filter: grayscale(100%); }
+
+        /* КВАДРАТНЫЕ АВАТАРКИ QCI */
+        .avatar-wrap {
+            position: relative; width: 36px; height: 36px; flex-shrink: 0;
+            background: var(--bg-inset);
+            border-top: 1px solid var(--border-dark); border-left: 1px solid var(--border-dark);
+            border-right: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light);
+            display: flex; align-items: center; justify-content: center; overflow: visible;
+        }
+        .avatar-wrap.sm { width: 28px; height: 28px; }
+        .avatar-wrap.lg { width: 54px; height: 54px; }
+        .avatar-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .avatar-letter { font-weight: bold; font-size: 14px; color: #4ade80; text-transform: uppercase; }
+        .avatar-wrap.sm .avatar-letter { font-size: 11px; }
+        .avatar-wrap.lg .avatar-letter { font-size: 20px; }
+        .avatar-status-badge {
+            position: absolute; bottom: -3px; right: -3px; width: 12px; height: 12px;
+            background-color: var(--bg-main); border-radius: 50%; padding: 1px;
+        }
 
         .win-btn {
             background: var(--btn-bg); color: var(--btn-text);
@@ -117,10 +136,10 @@
         .filter-input { width: 100%; padding: 7px 8px; margin-bottom: 6px; outline: none; }
         .contact-list { flex: 1; overflow-y: auto; padding: 6px; margin-bottom: 6px; }
         .group-title { font-weight: bold; color: #2ecc71; padding: 4px 2px; border-bottom: 1px dotted var(--border-light); margin: 6px 0 4px; font-size: 11px; }
-        .contact-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 8px; cursor: pointer; margin-bottom: 2px; }
+        .contact-item { display: flex; align-items: center; justify-content: space-between; padding: 7px 8px; cursor: pointer; margin-bottom: 3px; }
         .contact-item:hover { background: var(--bg-hover); }
         .contact-item.active { background: var(--bg-active); color: #fff; }
-        .contact-left { display: flex; align-items: center; gap: 8px; overflow: hidden; }
+        .contact-left { display: flex; align-items: center; gap: 10px; overflow: hidden; }
         .unread-counter { background: #e11d48; color: #fff; font-size: 10px; font-weight: bold; padding: 1px 6px; }
 
         .clist-bottom { display: flex; flex-direction: column; gap: 6px; }
@@ -130,13 +149,14 @@
         .status-bar select { flex: 1; padding: 5px; }
         .qci-brand { text-align: center; font-size: 11px; color: var(--text-muted); padding-top: 4px; }
 
-        .chat-user-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); padding: 7px 10px; margin-bottom: 6px; flex-wrap: wrap; gap: 6px; border: 1px solid var(--border-dark); }
+        .chat-user-bar { display: flex; justify-content: space-between; align-items: center; background: var(--bg-panel); padding: 7px 10px; margin-bottom: 6px; flex-wrap: wrap; gap: 8px; border: 1px solid var(--border-dark); }
         .chat-user-actions { display: flex; gap: 6px; flex-wrap: wrap; }
         .messages-area { flex: 1; padding: 12px; overflow-y: auto; margin-bottom: 6px; user-select: text; }
         .empty-chat-notice { color: var(--text-muted); text-align: center; margin-top: 15%; line-height: 1.6; }
 
-        /* СООБЩЕНИЯ И ТОЧКИ СТАТУСА ПРОЧТЕНИЯ */
-        .msg-row { margin-bottom: 8px; border-bottom: 1px dashed var(--border-light); padding: 6px 8px; display: flex; flex-direction: column; gap: 4px; }
+        /* СООБЩЕНИЯ С КВАДРАТНОЙ АВАТАРКОЙ И ТОЧКАМИ СТАТУСА */
+        .msg-row { margin-bottom: 8px; border-bottom: 1px dashed var(--border-light); padding: 6px 8px; display: flex; gap: 10px; align-items: flex-start; }
+        .msg-main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
         .msg-top-line { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         .msg-header-me { color: var(--nick-me); font-weight: bold; font-size: 12px; }
         .msg-header-other { color: var(--nick-other); font-weight: bold; font-size: 12px; }
@@ -151,7 +171,7 @@
         .status-dot-msg.sent { background-color: #38bdf8; box-shadow: 0 0 5px rgba(56,189,248,0.6); }
         .status-dot-msg.read { background-color: #22c55e; box-shadow: 0 0 6px rgba(34,197,94,0.75); }
 
-        .msg-text { padding-left: 4px; word-wrap: break-word; line-height: 1.42; }
+        .msg-text { word-wrap: break-word; line-height: 1.42; }
         .msg-media-img { max-width: 280px; max-height: 240px; border: 2px solid var(--border-light); margin-top: 6px; display: block; cursor: pointer; }
         .msg-media-video { max-width: 300px; max-height: 240px; border: 2px solid var(--border-light); margin-top: 6px; display: block; background: #000; }
         .del-msg-btn { background: var(--btn-bg); color: #f87171; border: 1px solid var(--border-light); font-size: 10px; font-weight: bold; padding: 1px 6px; cursor: pointer; }
@@ -173,7 +193,7 @@
         .upload-progress { font-size: 11px; color: #4ade80; margin-bottom: 4px; display: none; font-weight: bold; }
 
         /* МОДАЛЬНЫЕ ОКНА */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.68); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.72); display: none; justify-content: center; align-items: center; z-index: 1000; padding: 10px; }
         .modal-overlay.open { display: flex; }
         .modal-win { width: 100%; max-width: 470px; max-height: 94dvh; }
         .find-search-bar { display: flex; gap: 6px; margin-bottom: 8px; }
@@ -182,11 +202,23 @@
         .found-row { display: flex; justify-content: space-between; align-items: center; padding: 6px 8px; border-bottom: 1px dotted var(--border-light); gap: 6px; }
 
         .unified-settings { background: var(--bg-panel); padding: 12px; border: 1px solid var(--border-dark); display: flex; flex-direction: column; gap: 8px; }
+        .avatar-Quick-box { display: flex; align-items: center; gap: 12px; padding: 8px; background: var(--bg-inset); border: 1px solid var(--border-dark); }
         .field-row { display: flex; flex-direction: column; gap: 3px; }
         .field-row input[type="text"], .field-row input[type="password"], .field-row input[type="file"], .field-row select { padding: 7px; outline: none; width: 100%; }
         .check-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 5px 8px; background: var(--bg-inset); border: 1px solid var(--border-dark); }
         .check-row label { display: flex; align-items: center; gap: 7px; cursor: pointer; font-weight: bold; font-size: 12px; }
         .danger-zone { margin-top: 4px; padding-top: 8px; border-top: 1px dashed #7f1d1d; display: flex; justify-content: space-between; align-items: center; }
+
+        /* ОКНО ОБРЕЗКИ КВАДРАТНОЙ АВАТАРКИ (ДО 4096x4096) */
+        .cropper-area-wrap {
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            background: var(--bg-panel); padding: 10px; border: 1px solid var(--border-dark);
+        }
+        #cropCanvas {
+            width: 280px; height: 280px; background: #000; cursor: grab;
+            border: 2px solid #2ecc71; touch-action: none;
+        }
+        #cropCanvas:active { cursor: grabbing; }
 
         .toast-container { position: fixed; bottom: 18px; right: 18px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; max-width: 90vw; }
         .qci-toast { width: 310px; max-width: 100%; cursor: pointer; box-shadow: 0 8px 25px rgba(0,0,0,0.85); }
@@ -212,6 +244,7 @@
 <div class="toast-container" id="toastContainer"></div>
 <input type="file" id="photoInput" accept="image/*" style="display:none;" onchange="handleMediaFile(this, 'image')">
 <input type="file" id="videoInput" accept="video/*" style="display:none;" onchange="handleMediaFile(this, 'video')">
+<input type="file" id="avatarFileInput" accept="image/*" style="display:none;" onchange="openAvatarCropper(this)">
 
 <!-- 1. ОКНО ВХОДА И РЕГИСТРАЦИИ -->
 <div class="auth-screen" id="authScreen">
@@ -270,12 +303,17 @@
         </div>
         <div class="window-body">
             <div class="chat-user-bar">
-                <div class="user-stack">
-                    <div>
-                        <strong id="targetTypeLabel">Чат:</strong> <span id="targetNick" style="font-weight:bold;">Выберите контакт</span>
-                        <span id="myRoleBadgeArea"></span>
+                <div style="display:flex; align-items:center; gap:10px; overflow:hidden;">
+                    <div id="targetAvatarHeader" class="avatar-wrap">
+                        <span class="avatar-letter">?</span>
                     </div>
-                    <div class="user-login-bottom" id="targetSubInfo">Логин: --- | UIN: ---</div>
+                    <div class="user-stack">
+                        <div>
+                            <strong id="targetTypeLabel">Чат:</strong> <span id="targetNick" style="font-weight:bold;">Выберите контакт</span>
+                            <span id="myRoleBadgeArea"></span>
+                        </div>
+                        <div class="user-login-bottom" id="targetSubInfo">Логин: --- | UIN: ---</div>
+                    </div>
                 </div>
                 <div class="chat-user-actions">
                     <button type="button" class="win-btn accent-btn" id="rolesModalBtn" onclick="openRolesModal()" style="display:none;">Участники и роли</button>
@@ -288,7 +326,7 @@
                 <div class="empty-chat-notice">
                     <b>Добро пожаловать в QCI!</b><br>
                     Выберите друга или группу справа, либо нажмите <b>«Найти друзей / Группы»</b>.<br>
-                    Статусы доставки: <span class="status-dot-msg pending"></span> отправка, <span class="status-dot-msg sent"></span> доставлено, <span class="status-dot-msg read"></span> прочитано.
+                    В «⚙ Настройках» теперь можно загрузить и обрезать квадратную аватарку до <b>4096×4096 px</b>!
                 </div>
             </div>
 
@@ -329,8 +367,11 @@
         </div>
         <div class="window-body">
             <div class="my-info-bar">
-                <div style="display:flex; align-items:center; gap:8px; overflow:hidden;">
-                    <span class="flower-icon online" id="myFlower"></span>
+                <div style="display:flex; align-items:center; gap:10px; overflow:hidden;">
+                    <div class="avatar-wrap" id="myAvatarBox" onclick="openSettingsModal()" style="cursor:pointer;" title="Нажмите, чтобы изменить аватарку">
+                        <span class="avatar-letter" id="myAvatarFallback">U</span>
+                        <span class="flower-icon online avatar-status-badge" id="myFlower"></span>
+                    </div>
                     <div class="user-stack">
                         <span class="user-nick-top" id="myNickDisplay">User</span>
                         <span class="user-login-bottom" id="myLoginBottomDisplay">@login • UIN: ---</span>
@@ -356,13 +397,13 @@
                         <option value="offline">Невидимый (Offline)</option>
                     </select>
                 </div>
-                <div class="qci-brand">QCI • Guaranteed Delivery Engine</div>
+                <div class="qci-brand">QCI • 4096×4096 Square Avatars</div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- 3. ЕДИНОЕ ОКНО НАСТРОЕК АККАУНТА, УВЕДОМЛЕНИЙ И ЗВУКА -->
+<!-- 3. ЕДИНОЕ ОКНО НАСТРОЕК АККАУНТА И АВАТАРКИ -->
 <div class="modal-overlay" id="settingsModal">
     <div class="qci-window modal-win">
         <div class="title-bar">
@@ -371,6 +412,20 @@
         </div>
         <div class="window-body" style="overflow-y: auto;">
             <div class="unified-settings">
+                <!-- Блок квадратной аватарки -->
+                <div class="avatar-Quick-box">
+                    <div class="avatar-wrap lg" id="settingsAvatarPreview">
+                        <span class="avatar-letter">U</span>
+                    </div>
+                    <div style="flex:1; display:flex; flex-direction:column; gap:5px;">
+                        <div><b>Квадратная аватарка (до 4096×4096):</b></div>
+                        <div style="display:flex; gap:6px; flex-wrap:wrap;">
+                            <button type="button" class="win-btn accent-btn" onclick="document.getElementById('avatarFileInput').click()">📷 Загрузить и обрезать</button>
+                            <button type="button" class="win-btn danger-btn" onclick="removeMyAvatar()">Убрать</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="field-row">
                     <label><b>Уникальный Логин (отображается снизу как @логин):</b></label>
                     <input type="text" id="setLoginInput" class="inset-box">
@@ -443,7 +498,47 @@
     </div>
 </div>
 
-<!-- 4. МОДАЛКА ПОИСКА ДРУЗЕЙ И ГРУПП -->
+<!-- 4. ОКНО ИНТЕРАКТИВНОЙ ОБРЕЗКИ КВАДРАТНОЙ АВАТАРКИ (ДО 4096×4096) -->
+<div class="modal-overlay" id="cropModal">
+    <div class="qci-window modal-win" style="max-width: 400px;">
+        <div class="title-bar">
+            <div class="title-bar-text"><span class="flower-icon"></span> Обрезка квадратной аватарки (1:1)</div>
+            <div class="title-bar-controls"><button type="button" onclick="closeCropModal()">X</button></div>
+        </div>
+        <div class="window-body">
+            <div class="cropper-area-wrap">
+                <div style="font-size:11px; color:var(--text-muted); text-align:center;">
+                    Перетаскивайте картинку мышкой/пальцем и крутите ползунок масштаба:
+                </div>
+                <canvas id="cropCanvas" width="512" height="512"></canvas>
+
+                <div class="field-row" style="width:100%;">
+                    <label><b>Масштаб (Zoom): <span id="cropZoomLabel">100%</span></b></label>
+                    <input type="range" id="cropZoomRange" min="10" max="400" value="100" oninput="onCropZoomChange(this.value)">
+                </div>
+
+                <div class="field-row" style="width:100%;">
+                    <label><b>Разрешение выходного квадрата:</b></label>
+                    <select id="cropResolutionSelect" class="inset-box">
+                        <option value="4096">4096 × 4096 px (Ultra 4K Максимальное)</option>
+                        <option value="2048">2048 × 2048 px (2K Чёткое)</option>
+                        <option value="1024" selected>1024 × 1024 px (HD Оптимальное)</option>
+                        <option value="512">512 × 512 px (Быстрое)</option>
+                    </select>
+                </div>
+
+                <div id="cropStatusText" style="font-size:11px; color:#4ade80; min-height:14px; font-weight:bold;"></div>
+
+                <div style="display:flex; gap:8px; width:100%; margin-top:4px;">
+                    <button type="button" class="win-btn accent-btn" style="flex:1;" onclick="applyAndSaveCroppedAvatar()">✂ Обрезать и сохранить</button>
+                    <button type="button" class="win-btn" onclick="closeCropModal()">Отмена</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 5. МОДАЛКА ПОИСКА ДРУЗЕЙ И ГРУПП -->
 <div class="modal-overlay" id="friendsModal">
     <div class="qci-window modal-win">
         <div class="title-bar">
@@ -461,7 +556,7 @@
     </div>
 </div>
 
-<!-- 5. МОДАЛКА СОЗДАНИЯ ГРУППЫ -->
+<!-- 6. МОДАЛКА СОЗДАНИЯ ГРУППЫ -->
 <div class="modal-overlay" id="createGroupModal">
     <div class="qci-window modal-win" style="height: 220px; max-width: 360px;">
         <div class="title-bar">
@@ -481,7 +576,7 @@
     </div>
 </div>
 
-<!-- 6. МОДАЛКА УПРАВЛЕНИЯ РОЛЯМИ -->
+<!-- 7. МОДАЛКА УПРАВЛЕНИЯ РОЛЯМИ -->
 <div class="modal-overlay" id="rolesModal">
     <div class="qci-window modal-win">
         <div class="title-bar">
@@ -523,6 +618,7 @@ const STORAGE_KEYS = {
 let soundEnabled = localStorage.getItem(STORAGE_KEYS.SOUND_ENABLED) !== 'false';
 let notifyEnabled = localStorage.getItem(STORAGE_KEYS.NOTIFY_ENABLED) !== 'false';
 const processedEventIds = new Set();
+const avatarsCache = {}; // uin -> DataURL квадратной аватарки
 
 function migrateOldData() {
     let permAcc = JSON.parse(localStorage.getItem(STORAGE_KEYS.ACCOUNTS) || '{}');
@@ -548,7 +644,13 @@ function migrateOldData() {
             seenLogins.add(lowerLogin);
             acc.login = rawLogin;
             cleanedAcc[uin] = acc;
-            permUsers[uin] = { uin: acc.uin, login: acc.login, nickname: acc.nickname, status: acc.status || 'online' };
+            permUsers[uin] = {
+                uin: acc.uin,
+                login: acc.login,
+                nickname: acc.nickname,
+                status: acc.status || 'online',
+                avatarThumb: acc.avatarThumb || permUsers[uin]?.avatarThumb || null
+            };
         }
     }
 
@@ -559,7 +661,6 @@ function migrateOldData() {
     localStorage.setItem(STORAGE_KEYS.GROUPS, JSON.stringify(permGroups));
 }
 
-// Поиск пользователя по UIN или по @логину (без учета регистра)
 function resolveUserUin(queryStr) {
     if (!queryStr) return null;
     const clean = queryStr.trim().replace(/^@/, '').toLowerCase();
@@ -601,23 +702,28 @@ function isLoginTakenAnywhere(loginStr, excludeUin = null) {
 }
 
 // =====================================================================
-// 2. INDEXEDDB — МГНОВЕННОЕ ХРАНИЛИЩЕ ТЕКСТА И ФАЙЛОВ ДО 50 МБ
+// 2. INDEXEDDB — ХРАНЕНИЕ СООБЩЕНИЙ И 4K АВАТАРОК (4096×4096)
 // =====================================================================
 let dbInstance = null;
 let messagesCache = [];
 
 function initIndexedDB() {
     return new Promise((resolve) => {
-        const req = indexedDB.open('QCI_Permanent_DB', 1);
+        const req = indexedDB.open('QCI_Permanent_DB', 2);
         req.onupgradeneeded = (e) => {
             const db = e.target.result;
             if (!db.objectStoreNames.contains('messages')) {
                 db.createObjectStore('messages', { keyPath: 'id' });
             }
+            if (!db.objectStoreNames.contains('avatars')) {
+                db.createObjectStore('avatars', { keyPath: 'uin' });
+            }
         };
-        req.onsuccess = (e) => {
+        req.onsuccess = async (e) => {
             dbInstance = e.target.result;
-            reloadMessagesFromDB().then(resolve);
+            await reloadMessagesFromDB();
+            await reloadAvatarsFromDB();
+            resolve();
         };
         req.onerror = () => resolve();
     });
@@ -637,6 +743,318 @@ function reloadMessagesFromDB() {
     });
 }
 
+function reloadAvatarsFromDB() {
+    return new Promise((resolve) => {
+        if (!dbInstance || !dbInstance.objectStoreNames.contains('avatars')) { resolve(); return; }
+        const tx = dbInstance.transaction('avatars', 'readonly');
+        const store = tx.objectStore('avatars');
+        const getAll = store.getAll();
+        getAll.onsuccess = () => {
+            (getAll.result || []).forEach(item => {
+                if (item && item.uin && item.dataUrl) {
+                    avatarsCache[item.uin] = item.dataUrl;
+                }
+            });
+            resolve();
+        };
+        getAll.onerror = () => resolve();
+    });
+}
+
+function dbSaveAvatar(uin, fullDataUrl) {
+    return new Promise((resolve) => {
+        avatarsCache[String(uin)] = fullDataUrl;
+        if (!dbInstance || !dbInstance.objectStoreNames.contains('avatars')) { resolve(); return; }
+        const tx = dbInstance.transaction('avatars', 'readwrite');
+        tx.objectStore('avatars').put({ uin: String(uin), dataUrl: fullDataUrl });
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => resolve();
+    });
+}
+
+function dbRemoveAvatar(uin) {
+    return new Promise((resolve) => {
+        delete avatarsCache[String(uin)];
+        if (!dbInstance || !dbInstance.objectStoreNames.contains('avatars')) { resolve(); return; }
+        const tx = dbInstance.transaction('avatars', 'readwrite');
+        tx.objectStore('avatars').delete(String(uin));
+        tx.oncomplete = () => resolve();
+        tx.onerror = () => resolve();
+    });
+}
+
+function getAvatarForUin(uin) {
+    const sUin = String(uin);
+    if (avatarsCache[sUin]) return avatarsCache[sUin];
+    const known = getKnownUsers();
+    if (known[sUin]?.avatarThumb) return known[sUin].avatarThumb;
+    const acc = getAccounts();
+    if (acc[sUin]?.avatarThumb) return acc[sUin].avatarThumb;
+    return null;
+}
+
+function buildAvatarHtml(uin, fallbackTitle, sizeClass = '', status = null) {
+    const avatarSrc = getAvatarForUin(uin);
+    const letter = (fallbackTitle || '?').trim().charAt(0).toUpperCase() || '?';
+    const inner = avatarSrc
+        ? '<img src="' + avatarSrc + '" class="avatar-img" alt="avatar">'
+        : '<span class="avatar-letter">' + escapeHtml(letter) + '</span>';
+    const badge = status
+        ? '<span class="flower-icon ' + status + ' avatar-status-badge"></span>'
+        : '';
+    return '<div class="avatar-wrap ' + sizeClass + '">' + inner + badge + '</div>';
+}
+
+// =====================================================================
+// 3. ИНТЕРАКТИВНЫЙ РЕДАКТОР ОБРЕЗКИ АВАТАРКИ 1:1 (ДО 4096×4096)
+// =====================================================================
+let cropImageObj = null;
+let cropState = {
+    scale: 1,
+    minScale: 0.1,
+    maxScale: 5,
+    offsetX: 0,
+    offsetY: 0,
+    dragging: false,
+    startX: 0,
+    startY: 0
+};
+
+function openAvatarCropper(input) {
+    const file = input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+            cropImageObj = img;
+            const canvas = document.getElementById('cropCanvas');
+            const viewSize = canvas.width; // 512x512 внутренний буфер предпросмотра
+
+            // Подбираем стартовый масштаб, чтобы картинка заполнила квадрат по меньшей стороне
+            const fitScale = Math.max(viewSize / img.width, viewSize / img.height);
+            cropState.minScale = fitScale * 0.25;
+            cropState.maxScale = fitScale * 6;
+            cropState.scale = fitScale;
+            cropState.offsetX = (viewSize - img.width * fitScale) / 2;
+            cropState.offsetY = (viewSize - img.height * fitScale) / 2;
+
+            document.getElementById('cropZoomRange').value = 100;
+            document.getElementById('cropZoomLabel').innerText = '100%';
+            document.getElementById('cropStatusText').innerText = 'Исходник: ' + img.width + '×' + img.height + ' px';
+            document.getElementById('cropModal').classList.add('open');
+            drawCropPreview();
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+    input.value = '';
+}
+
+function closeCropModal() {
+    document.getElementById('cropModal').classList.remove('open');
+    cropImageObj = null;
+}
+
+function onCropZoomChange(val) {
+    if (!cropImageObj) return;
+    const canvas = document.getElementById('cropCanvas');
+    const viewSize = canvas.width;
+    const fitScale = Math.max(viewSize / cropImageObj.width, viewSize / cropImageObj.height);
+    const newScale = fitScale * (Number(val) / 100);
+
+    // Масштабируем относительно центра квадрата
+    const center = viewSize / 2;
+    const ratio = newScale / cropState.scale;
+    cropState.offsetX = center - (center - cropState.offsetX) * ratio;
+    cropState.offsetY = center - (center - cropState.offsetY) * ratio;
+    cropState.scale = newScale;
+
+    document.getElementById('cropZoomLabel').innerText = val + '%';
+    drawCropPreview();
+}
+
+function drawCropPreview() {
+    if (!cropImageObj) return;
+    const canvas = document.getElementById('cropCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.fillStyle = '#111317';
+    ctx.fillRect(0, 0, w, h);
+
+    ctx.drawImage(
+        cropImageObj,
+        cropState.offsetX,
+        cropState.offsetY,
+        cropImageObj.width * cropState.scale,
+        cropImageObj.height * cropState.scale
+    );
+
+    // Рисуем аккуратную сетку третей поверх квадрата
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.28)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(w / 3, 0); ctx.lineTo(w / 3, h);
+    ctx.moveTo((w * 2) / 3, 0); ctx.lineTo((w * 2) / 3, h);
+    ctx.moveTo(0, h / 3); ctx.lineTo(w, h / 3);
+    ctx.moveTo(0, (h * 2) / 3); ctx.lineTo(w, (h * 2) / 3);
+    ctx.stroke();
+}
+
+function setupCropCanvasInteractions() {
+    const canvas = document.getElementById('cropCanvas');
+    if (!canvas) return;
+
+    const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+        const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+        const scaleCanvas = canvas.width / rect.width;
+        return { x: (clientX - rect.left) * scaleCanvas, y: (clientY - rect.top) * scaleCanvas };
+    };
+
+    const startDrag = (e) => {
+        if (!cropImageObj) return;
+        e.preventDefault();
+        cropState.dragging = true;
+        const pos = getPos(e);
+        cropState.startX = pos.x - cropState.offsetX;
+        cropState.startY = pos.y - cropState.offsetY;
+    };
+
+    const moveDrag = (e) => {
+        if (!cropState.dragging || !cropImageObj) return;
+        e.preventDefault();
+        const pos = getPos(e);
+        cropState.offsetX = pos.x - cropState.startX;
+        cropState.offsetY = pos.y - cropState.startY;
+        drawCropPreview();
+    };
+
+    const endDrag = () => { cropState.dragging = false; };
+
+    canvas.addEventListener('mousedown', startDrag);
+    window.addEventListener('mousemove', moveDrag);
+    window.addEventListener('mouseup', endDrag);
+
+    canvas.addEventListener('touchstart', startDrag, { passive: false });
+    window.addEventListener('touchmove', moveDrag, { passive: false });
+    window.addEventListener('touchend', endDrag);
+}
+
+async function applyAndSaveCroppedAvatar() {
+    if (!cropImageObj || !currentUser) return;
+    const statusEl = document.getElementById('cropStatusText');
+    const targetRes = Number(document.getElementById('cropResolutionSelect').value) || 1024;
+    statusEl.innerText = '⏳ Генерация квадрата ' + targetRes + '×' + targetRes + ' px...';
+
+    await new Promise(r => setTimeout(r, 30));
+
+    const previewCanvas = document.getElementById('cropCanvas');
+    const ratio = targetRes / previewCanvas.width;
+
+    // 1. Рендерим полный квадрат выбранного разрешения (вплоть до 4096×4096)
+    const outCanvas = document.createElement('canvas');
+    outCanvas.width = targetRes;
+    outCanvas.height = targetRes;
+    const outCtx = outCanvas.getContext('2d');
+    outCtx.fillStyle = '#111317';
+    outCtx.fillRect(0, 0, targetRes, targetRes);
+    outCtx.drawImage(
+        cropImageObj,
+        cropState.offsetX * ratio,
+        cropState.offsetY * ratio,
+        cropImageObj.width * cropState.scale * ratio,
+        cropImageObj.height * cropState.scale * ratio
+    );
+    const fullDataUrl = outCanvas.toDataURL('image/jpeg', 0.9);
+
+    // 2. Создаём лёгкую иконку-превью (160×160) для мгновенной синхронизации в пакетах присутствия
+    const thumbCanvas = document.createElement('canvas');
+    thumbCanvas.width = 160;
+    thumbCanvas.height = 160;
+    thumbCanvas.getContext('2d').drawImage(outCanvas, 0, 0, 160, 160);
+    const thumbDataUrl = thumbCanvas.toDataURL('image/jpeg', 0.85);
+
+    // Сохраняем в IndexedDB и профиль
+    await dbSaveAvatar(currentUser.uin, fullDataUrl);
+    currentUser.avatarThumb = thumbDataUrl;
+
+    const accounts = getAccounts();
+    if (accounts[currentUser.uin]) {
+        accounts[currentUser.uin].avatarThumb = thumbDataUrl;
+        saveAccounts(accounts);
+    }
+    sessionStorage.setItem(STORAGE_KEYS.TAB_SESSION, JSON.stringify(currentUser));
+    localStorage.setItem(STORAGE_KEYS.SESSION_FALLBACK, JSON.stringify(currentUser));
+    saveKnownUser({
+        uin: currentUser.uin,
+        login: currentUser.login,
+        nickname: currentUser.nickname,
+        status: currentUser.status || 'online',
+        avatarThumb: thumbDataUrl
+    });
+
+    // Обновляем превью в настройках и шапке
+    updateSettingsAvatarPreview();
+    updateMyProfileUI();
+    renderContacts();
+    if (activeTargetUin) renderMessages();
+
+    // Транслируем обновлённую аватарку в соседние вкладки и по сети
+    emitSignalEverywhere({
+        type: 'avatar_updated',
+        uin: String(currentUser.uin),
+        avatarThumb: thumbDataUrl
+    });
+    announcePresence();
+
+    closeCropModal();
+    document.getElementById('settingsStatusMsg').style.color = '#4ade80';
+    document.getElementById('settingsStatusMsg').innerText = '✓ Квадратная аватарка (' + targetRes + '×' + targetRes + ') успешно установлена!';
+}
+
+async function removeMyAvatar() {
+    if (!currentUser) return;
+    await dbRemoveAvatar(currentUser.uin);
+    currentUser.avatarThumb = null;
+    const accounts = getAccounts();
+    if (accounts[currentUser.uin]) {
+        accounts[currentUser.uin].avatarThumb = null;
+        saveAccounts(accounts);
+    }
+    const known = getKnownUsers();
+    if (known[currentUser.uin]) {
+        known[currentUser.uin].avatarThumb = null;
+        localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(known));
+    }
+    sessionStorage.setItem(STORAGE_KEYS.TAB_SESSION, JSON.stringify(currentUser));
+    localStorage.setItem(STORAGE_KEYS.SESSION_FALLBACK, JSON.stringify(currentUser));
+
+    updateSettingsAvatarPreview();
+    updateMyProfileUI();
+    renderContacts();
+    if (activeTargetUin) renderMessages();
+    announcePresence();
+}
+
+function updateSettingsAvatarPreview() {
+    const box = document.getElementById('settingsAvatarPreview');
+    if (!box || !currentUser) return;
+    const src = getAvatarForUin(currentUser.uin);
+    if (src) {
+        box.innerHTML = '<img src="' + src + '" class="avatar-img" alt="avatar">';
+    } else {
+        const letter = (currentUser.nickname || 'U').charAt(0).toUpperCase();
+        box.innerHTML = '<span class="avatar-letter">' + escapeHtml(letter) + '</span>';
+    }
+}
+
+// =====================================================================
+// 4. СООБЩЕНИЯ В БАЗЕ
+// =====================================================================
 function dbSaveOrUpdateMessage(msgObj) {
     return new Promise((resolve) => {
         const idx = messagesCache.findIndex(m => m.id === msgObj.id);
@@ -699,7 +1117,7 @@ function dbClearChatMessages(targetUin, myUin, isGroup) {
 }
 
 // =====================================================================
-// 3. ГЕНЕРАТОР 16 PNG-СМАЙЛОВ
+// 5. ГЕНЕРАТОР 16 PNG-СМАЙЛОВ
 // =====================================================================
 const SMILEY_DEFS = [
     { code: ':-)', label: 'Улыбка', draw: (ctx) => { drawBaseFace(ctx, '#facc15'); drawEyes(ctx); ctx.beginPath(); ctx.arc(16, 17, 7, 0.15*Math.PI, 0.85*Math.PI); ctx.stroke(); } },
@@ -772,15 +1190,15 @@ function renderTextWithPngSmileys(text) {
 }
 
 // =====================================================================
-// 4. ГАРАНТИРОВАННАЯ ДОСТАВКА СООБЩЕНИЙ И МЕДИАФАЙЛОВ
+// 6. ГАРАНТИРОВАННАЯ ДОСТАВКА СООБЩЕНИЙ И МЕДИАФАЙЛОВ
 // =====================================================================
 let currentUser = null;
 let activeTargetUin = null;
 let mqttClient = null;
 let unreadCounts = {};
 let incomingChunks = {};
-const TOPIC_PREFIX = "qci_net_v14/";
-const localChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('qci_bus_v14') : null;
+const TOPIC_PREFIX = "qci_net_v15/";
+const localChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('qci_bus_v15') : null;
 
 function getAccounts() { return JSON.parse(localStorage.getItem(STORAGE_KEYS.ACCOUNTS) || '{}'); }
 function saveAccounts(acc) { localStorage.setItem(STORAGE_KEYS.ACCOUNTS, JSON.stringify(acc)); }
@@ -792,7 +1210,8 @@ function saveKnownUser(u) {
         uin: String(u.uin),
         login: u.login || saved[u.uin]?.login || ('user' + u.uin),
         nickname: u.nickname || saved[u.uin]?.nickname || ('Контакт #' + u.uin),
-        status: u.status || 'online'
+        status: u.status || 'online',
+        avatarThumb: u.avatarThumb || saved[u.uin]?.avatarThumb || null
     };
     localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(saved));
 }
@@ -806,6 +1225,7 @@ function removeUserEverywhere(uin) {
     delete known[uin];
     localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(known));
     localStorage.removeItem('qci_permanent_clist_' + uin);
+    dbRemoveAvatar(uin);
 }
 
 function getGroups() {
@@ -897,6 +1317,7 @@ function handleMediaFile(input, mediaType) {
             sender_uin: String(currentUser.uin),
             sender_login: currentUser.login,
             sender_nick: currentUser.nickname,
+            sender_avatar: currentUser.avatarThumb || null,
             receiver_uin: String(activeTargetUin),
             content: dataUrl,
             mediaType: mediaType,
@@ -905,11 +1326,8 @@ function handleMediaFile(input, mediaType) {
             timestamp: new Date().toLocaleTimeString().slice(0,5)
         };
 
-        // 1. Сначала гарантированно сохраняем в общую IndexedDB
         await dbSaveOrUpdateMessage(msgObj);
         appendSingleMessageToDOM(msgObj);
-
-        // 2. Отправляем по локальным и сетевым каналам
         await deliverMessageEverywhere(msgObj, prog);
         prog.style.display = 'none';
         input.value = '';
@@ -917,12 +1335,10 @@ function handleMediaFile(input, mediaType) {
     reader.readAsDataURL(file);
 }
 
-// Надежная доставка текста и тяжелых файлов и между вкладками, и по сети MQTT
 async function deliverMessageEverywhere(msgObj, progElem = null) {
     const evId = 'msg_ev_' + msgObj.id;
     processedEventIds.add(evId);
 
-    // Канал А: Мгновенный сигнал через localStorage для всех вкладок этого браузера (читают прямо из IndexedDB без лимита размера!)
     try {
         localStorage.setItem(STORAGE_KEYS.STORAGE_PING, JSON.stringify({
             eventId: evId,
@@ -934,7 +1350,6 @@ async function deliverMessageEverywhere(msgObj, progElem = null) {
         }));
     } catch (e) {}
 
-    // Канал Б: BroadcastChannel
     if (localChannel) {
         try {
             localChannel.postMessage({ eventId: evId, type: 'new_msg', msg: msgObj });
@@ -943,10 +1358,9 @@ async function deliverMessageEverywhere(msgObj, progElem = null) {
         }
     }
 
-    // Канал В: Облачный MQTT (для разных компьютеров и смартфонов)
     if (mqttClient && mqttClient.connected) {
         const rawStr = JSON.stringify(msgObj);
-        const CHUNK_SIZE = 16000; // Безопасный размер 16 КБ, который никогда не рвет соединение брокера
+        const CHUNK_SIZE = 16000;
         const targetTopic = TOPIC_PREFIX + 'inbox/' + msgObj.receiver_uin;
 
         if (rawStr.length <= CHUNK_SIZE) {
@@ -975,13 +1389,12 @@ async function deliverMessageEverywhere(msgObj, progElem = null) {
         }
         updateMessageDeliveryStatus(msgObj.id, 'sent');
     } else {
-        // Даже если интернет отключен, для локальных вкладок помечаем отправленным
         setTimeout(() => updateMessageDeliveryStatus(msgObj.id, 'sent'), 100);
     }
 }
 
 // =====================================================================
-// 5. НАСТРОЙКИ АККАУНТА, ЗВУКА И УВЕДОМЛЕНИЙ
+// 7. НАСТРОЙКИ АККАУНТА, ЗВУКА И УВЕДОМЛЕНИЙ
 // =====================================================================
 function updateBrowserPermButtonUI() {
     const btn = document.getElementById('reqBrowserPermBtn');
@@ -1034,6 +1447,7 @@ function openSettingsModal() {
     document.getElementById('setPassInput').value = '';
     document.getElementById('setSoundCheck').checked = soundEnabled;
     document.getElementById('setNotifyCheck').checked = notifyEnabled;
+    updateSettingsAvatarPreview();
     updateBrowserPermButtonUI();
     document.getElementById('settingsStatusMsg').innerText = '';
     document.getElementById('settingsModal').classList.add('open');
@@ -1067,7 +1481,13 @@ function saveAllSettings() {
     saveAccounts(accounts);
     sessionStorage.setItem(STORAGE_KEYS.TAB_SESSION, JSON.stringify(currentUser));
     localStorage.setItem(STORAGE_KEYS.SESSION_FALLBACK, JSON.stringify(currentUser));
-    saveKnownUser({ uin: currentUser.uin, login: currentUser.login, nickname: currentUser.nickname, status: currentUser.status || 'online' });
+    saveKnownUser({
+        uin: currentUser.uin,
+        login: currentUser.login,
+        nickname: currentUser.nickname,
+        status: currentUser.status || 'online',
+        avatarThumb: currentUser.avatarThumb || null
+    });
 
     updateMyProfileUI();
     announcePresence();
@@ -1161,7 +1581,7 @@ async function restoreAppearanceSettings() {
 }
 
 // =====================================================================
-// 6. АВТОРИЗАЦИЯ И МНОГОКАНАЛЬНАЯ СИНХРОНИЗАЦИЯ
+// 8. АВТОРИЗАЦИЯ И МНОГОКАНАЛЬНАЯ СИНХРОНИЗАЦИЯ
 // =====================================================================
 function switchAuthTab(mode) {
     document.getElementById('authError').innerText = '';
@@ -1189,11 +1609,11 @@ function handleRegister() {
     }
 
     const newUin = String(Math.floor(100000 + Math.random() * 899999));
-    const newUser = { uin: newUin, login: login, nickname: nick, password: pass, status: 'online' };
+    const newUser = { uin: newUin, login: login, nickname: nick, password: pass, status: 'online', avatarThumb: null };
     const accounts = getAccounts();
     accounts[newUin] = newUser;
     saveAccounts(accounts);
-    saveKnownUser({ uin: newUin, login: login, nickname: nick, status: 'online' });
+    saveKnownUser({ uin: newUin, login: login, nickname: nick, status: 'online', avatarThumb: null });
     loginSuccess(newUser, true);
 }
 
@@ -1219,6 +1639,17 @@ function updateMyProfileUI() {
     document.getElementById('myNickDisplay').innerText = currentUser.nickname;
     document.getElementById('myLoginBottomDisplay').innerText = '@' + (currentUser.login || currentUser.nickname) + ' • UIN: ' + currentUser.uin;
     document.getElementById('myTitleBar').innerHTML = '<span class="flower-icon online"></span> QCI — ' + escapeHtml(currentUser.nickname);
+
+    const myBox = document.getElementById('myAvatarBox');
+    if (myBox) {
+        const src = getAvatarForUin(currentUser.uin);
+        const letter = (currentUser.nickname || 'U').charAt(0).toUpperCase();
+        const st = currentUser.status || 'online';
+        myBox.innerHTML = (src
+            ? '<img src="' + src + '" class="avatar-img" alt="avatar">'
+            : '<span class="avatar-letter">' + escapeHtml(letter) + '</span>') +
+            '<span class="flower-icon ' + st + ' avatar-status-badge" id="myFlower"></span>';
+    }
 }
 
 function loginSuccess(user, playHorn = false) {
@@ -1227,10 +1658,15 @@ function loginSuccess(user, playHorn = false) {
     if (!user.login) user.login = user.nickname;
 
     currentUser = user;
-    // Сохраняем сессию изолированно в sessionStorage для этой вкладки + резервно в localStorage
     sessionStorage.setItem(STORAGE_KEYS.TAB_SESSION, JSON.stringify(user));
     localStorage.setItem(STORAGE_KEYS.SESSION_FALLBACK, JSON.stringify(user));
-    saveKnownUser({ uin: user.uin, login: user.login, nickname: user.nickname, status: user.status || 'online' });
+    saveKnownUser({
+        uin: user.uin,
+        login: user.login,
+        nickname: user.nickname,
+        status: user.status || 'online',
+        avatarThumb: user.avatarThumb || null
+    });
 
     document.getElementById('authScreen').style.display = 'none';
     document.getElementById('appScreen').style.display = 'flex';
@@ -1286,18 +1722,22 @@ function showIncomingNotification(msgObj) {
     }
 }
 
-// Обработка полученного сообщения (текста или файла) получателем
 async function handleReceivedMessageObject(msg) {
     if (!currentUser || !msg) return;
     if (String(msg.sender_uin) === String(currentUser.uin) || msg.receiver_uin === '000000') return;
 
-    saveKnownUser({ uin: msg.sender_uin, login: msg.sender_login, nickname: msg.sender_nick, status: 'online' });
+    saveKnownUser({
+        uin: msg.sender_uin,
+        login: msg.sender_login,
+        nickname: msg.sender_nick,
+        status: 'online',
+        avatarThumb: msg.sender_avatar || null
+    });
 
     const groups = getGroups();
     const isGroupMsg = Boolean(groups[msg.receiver_uin]) || String(msg.receiver_uin).startsWith('G');
     const myList = getMyContactsAndGroups();
 
-    // Проверяем, адресовано ли сообщение нам (или нашей группе)
     const isForMe = (!isGroupMsg && (
         String(msg.receiver_uin) === String(currentUser.uin) ||
         String(msg.receiver_uin).toLowerCase() === String(currentUser.login || '').toLowerCase()
@@ -1305,10 +1745,8 @@ async function handleReceivedMessageObject(msg) {
 
     if (!isForMe) return;
 
-    // Нормализуем receiver_uin на случай, если отправитель писал по логину
     if (!isGroupMsg) msg.receiver_uin = String(currentUser.uin);
 
-    // Автоматически добавляем отправителя в список контактов, если его там еще не было!
     if (!isGroupMsg && !myList.includes(String(msg.sender_uin))) {
         myList.push(String(msg.sender_uin));
         saveMyContactsAndGroups(myList);
@@ -1320,7 +1758,6 @@ async function handleReceivedMessageObject(msg) {
     const chatKey = isGroupMsg ? String(msg.receiver_uin) : String(msg.sender_uin);
     const isChatCurrentlyOpen = (String(activeTargetUin) === chatKey && !document.hidden);
 
-    // Отправляем отправителю подтверждение доставки (Синяя) или прочтения (Зелёная)
     emitSignalEverywhere({
         type: 'msg_ack',
         msgId: msg.id,
@@ -1344,6 +1781,21 @@ async function processIncomingEvent(packet) {
     if (packet.eventId) {
         if (processedEventIds.has(packet.eventId)) return;
         processedEventIds.add(packet.eventId);
+    }
+
+    if (packet.type === 'avatar_updated') {
+        await reloadAvatarsFromDB();
+        const known = getKnownUsers();
+        if (known[packet.uin]) {
+            known[packet.uin].avatarThumb = packet.avatarThumb;
+            localStorage.setItem(STORAGE_KEYS.USERS, JSON.stringify(known));
+        }
+        renderContacts();
+        if (activeTargetUin) {
+            updateActiveHeader();
+            renderMessages();
+        }
+        return;
     }
 
     if (packet.type === 'idb_new_msg') {
@@ -1422,7 +1874,6 @@ async function processIncomingEvent(packet) {
         const groups = getGroups();
         groups[packet.group.uin] = packet.group;
         saveGroups(groups);
-        // Если нас добавили в группу — автоматически добавляем её в наш контакт-лист!
         if (packet.group.roles && packet.group.roles[currentUser.uin]) {
             const myList = getMyContactsAndGroups();
             if (!myList.includes(packet.group.uin)) {
@@ -1464,7 +1915,6 @@ function setupRealtimeSync() {
         localChannel.onmessage = (ev) => processIncomingEvent(ev.data);
     }
 
-    // Слушаем события localStorage (гарантированно срабатывает во всех соседних вкладках браузера!)
     window.addEventListener('storage', (ev) => {
         if (ev.key === STORAGE_KEYS.STORAGE_PING && ev.newValue) {
             try { processIncomingEvent(JSON.parse(ev.newValue)); } catch (e) {}
@@ -1497,12 +1947,18 @@ function announcePresence() {
     if (!currentUser) return;
     emitSignalEverywhere({
         type: 'presence',
-        user: { uin: String(currentUser.uin), login: currentUser.login, nickname: currentUser.nickname, status: currentUser.status || 'online' }
+        user: {
+            uin: String(currentUser.uin),
+            login: currentUser.login,
+            nickname: currentUser.nickname,
+            status: currentUser.status || 'online',
+            avatarThumb: currentUser.avatarThumb || null
+        }
     });
 }
 
 // =====================================================================
-// 7. ОТРИСОВКА КОНТАКТОВ И СООБЩЕНИЙ
+// 9. ОТРИСОВКА КОНТАКТОВ И СООБЩЕНИЙ С КВАДРАТНЫМИ АВАТАРКАМИ
 // =====================================================================
 function closeMobileChat() {
     document.getElementById('appScreen').classList.remove('mobile-chat-active');
@@ -1541,7 +1997,8 @@ function renderContacts() {
         const div = document.createElement('div');
         div.className = 'contact-item' + (activeTargetUin === g.uin ? ' active' : '');
         div.onclick = () => selectContact(g.uin);
-        div.innerHTML = '<div class="contact-left"><span class="flower-icon online"></span>' +
+        div.innerHTML = '<div class="contact-left">' +
+            buildAvatarHtml(g.uin, g.nickname, '', 'online') +
             '<div class="user-stack"><span class="user-nick-top">[Группа] ' + escapeHtml(g.nickname) + '</span>' +
             '<span class="user-login-bottom">ID: ' + g.uin + '</span></div></div>' +
             '<div>' + (unread > 0 ? '<span class="unread-counter">+' + unread + '</span>' : '') + getRoleBadgeHtml(myRole) + '</div>';
@@ -1557,7 +2014,8 @@ function renderContacts() {
         const div = document.createElement('div');
         div.className = 'contact-item' + (String(activeTargetUin) === String(u.uin) ? ' active' : '');
         div.onclick = () => selectContact(String(u.uin));
-        div.innerHTML = '<div class="contact-left"><span class="flower-icon ' + (u.status || 'online') + '"></span>' +
+        div.innerHTML = '<div class="contact-left">' +
+            buildAvatarHtml(u.uin, u.nickname, '', u.status || 'online') +
             '<div class="user-stack"><span class="user-nick-top">' + escapeHtml(u.nickname) + '</span>' +
             '<span class="user-login-bottom">@' + escapeHtml(loginText) + ' • UIN: ' + u.uin + '</span></div></div>' +
             (unread > 0 ? '<span class="unread-counter">+' + unread + '</span>' : '');
@@ -1566,7 +2024,6 @@ function renderContacts() {
 }
 
 async function selectContact(id, isRestore = false) {
-    // Если вдруг передан логин вместо UIN — резолвим в точный UIN
     const resolved = resolveUserUin(id);
     if (resolved && !getGroups()[id]) id = resolved;
 
@@ -1609,6 +2066,7 @@ function updateActiveHeader() {
     const leaveBtn = document.getElementById('leaveOrRemoveBtn');
     const rolesBtn = document.getElementById('rolesModalBtn');
     const badgeArea = document.getElementById('myRoleBadgeArea');
+    const headerAva = document.getElementById('targetAvatarHeader');
 
     if (isGroup) {
         const g = groups[activeTargetUin];
@@ -1620,6 +2078,7 @@ function updateActiveHeader() {
         badgeArea.innerHTML = '&nbsp;' + getRoleBadgeHtml(myRole);
         rolesBtn.style.display = 'inline-flex';
         leaveBtn.innerText = 'Покинуть группу';
+        if (headerAva) headerAva.outerHTML = buildAvatarHtml(g.uin, g.nickname, '', 'online').replace('class="avatar-wrap ', 'id="targetAvatarHeader" class="avatar-wrap ');
     } else {
         const u = known[activeTargetUin] || accounts[activeTargetUin] || { uin: activeTargetUin, login: 'user' + activeTargetUin, nickname: 'Контакт #' + activeTargetUin, status: 'online' };
         const loginStr = u.login || ('user' + u.uin);
@@ -1630,6 +2089,7 @@ function updateActiveHeader() {
         badgeArea.innerHTML = '';
         rolesBtn.style.display = 'none';
         leaveBtn.innerText = 'Удалить друга';
+        if (headerAva) headerAva.outerHTML = buildAvatarHtml(u.uin, u.nickname, '', u.status || 'online').replace('class="avatar-wrap ', 'id="targetAvatarHeader" class="avatar-wrap ');
     }
 }
 
@@ -1644,6 +2104,14 @@ function buildMessageRowDOM(m) {
     const row = document.createElement('div');
     row.className = 'msg-row';
     row.id = 'msg-row-' + m.id;
+
+    // Квадратная аватарка автора сообщения слева
+    const avaCol = document.createElement('div');
+    avaCol.innerHTML = buildAvatarHtml(m.sender_uin, displayNick, 'sm');
+    row.appendChild(avaCol.firstElementChild);
+
+    const mainCol = document.createElement('div');
+    mainCol.className = 'msg-main-col';
 
     const topLine = document.createElement('div');
     topLine.className = 'msg-top-line';
@@ -1677,7 +2145,7 @@ function buildMessageRowDOM(m) {
 
     topLine.appendChild(authorBlock);
     topLine.appendChild(metaRight);
-    row.appendChild(topLine);
+    mainCol.appendChild(topLine);
 
     const bodyDiv = document.createElement('div');
     bodyDiv.className = 'msg-text';
@@ -1698,7 +2166,8 @@ function buildMessageRowDOM(m) {
         bodyDiv.innerHTML = renderTextWithPngSmileys(m.content);
     }
 
-    row.appendChild(bodyDiv);
+    mainCol.appendChild(bodyDiv);
+    row.appendChild(mainCol);
     return row;
 }
 
@@ -1748,6 +2217,7 @@ async function sendMessage() {
         sender_uin: String(currentUser.uin),
         sender_login: currentUser.login,
         sender_nick: currentUser.nickname,
+        sender_avatar: currentUser.avatarThumb || null,
         receiver_uin: String(activeTargetUin),
         content: text,
         mediaType: 'text',
@@ -1845,8 +2315,10 @@ function renderGroupMembersModal() {
 
         const row = document.createElement('div');
         row.className = 'found-row';
-        row.innerHTML = '<div class="user-stack"><span class="user-nick-top">' + escapeHtml(u.nickname) + ' ' + getRoleBadgeHtml(role) + '</span>' +
-            '<span class="user-login-bottom">@' + escapeHtml(u.login || ('user'+uin)) + ' • UIN: ' + uin + '</span></div>';
+        row.innerHTML = '<div style="display:flex; align-items:center; gap:8px;">' +
+            buildAvatarHtml(uin, u.nickname, 'sm') +
+            '<div class="user-stack"><span class="user-nick-top">' + escapeHtml(u.nickname) + ' ' + getRoleBadgeHtml(role) + '</span>' +
+            '<span class="user-login-bottom">@' + escapeHtml(u.login || ('user'+uin)) + ' • UIN: ' + uin + '</span></div></div>';
 
         const btnBox = document.createElement('div');
         btnBox.style.cssText = 'display:flex; gap:4px;';
@@ -1916,10 +2388,9 @@ function renderGlobalUsers() {
     const groups = getGroups();
     const myList = getMyContactsAndGroups();
 
-    // Объединяем всех локально зарегистрированных и сетевых пользователей
     const allUsersMap = { ...known };
     for (const [uin, acc] of Object.entries(accounts)) {
-        allUsersMap[uin] = { uin: acc.uin, login: acc.login, nickname: acc.nickname, status: acc.status || 'online' };
+        allUsersMap[uin] = { uin: acc.uin, login: acc.login, nickname: acc.nickname, status: acc.status || 'online', avatarThumb: acc.avatarThumb || null };
     }
 
     const items = [];
@@ -1945,8 +2416,10 @@ function renderGlobalUsers() {
         const row = document.createElement('div');
         row.className = 'found-row';
         const sub = item.isGroup ? ('ID группы: ' + item.uin) : ('@' + (item.login || ('user' + item.uin)) + ' • UIN: ' + item.uin);
-        row.innerHTML = '<div class="user-stack"><span class="user-nick-top">' + escapeHtml(item.nickname) + '</span>' +
-            '<span class="user-login-bottom">' + escapeHtml(sub) + '</span></div>';
+        row.innerHTML = '<div style="display:flex; align-items:center; gap:8px;">' +
+            buildAvatarHtml(item.uin, item.nickname, 'sm') +
+            '<div class="user-stack"><span class="user-nick-top">' + escapeHtml(item.nickname) + '</span>' +
+            '<span class="user-login-bottom">' + escapeHtml(sub) + '</span></div></div>';
 
         const btn = document.createElement('button');
         if (myList.includes(String(item.uin))) {
@@ -1997,7 +2470,6 @@ function addByExactUin() {
         return;
     }
 
-    // Ищем точный UIN по логину или номеру
     const resolvedUin = resolveUserUin(val) || val;
     if (String(resolvedUin) === String(currentUser.uin)) return;
 
@@ -2013,7 +2485,11 @@ function addByExactUin() {
     selectContact(String(resolvedUin));
 }
 
-function changeMyStatus(st) { currentUser.status = st; document.getElementById('myFlower').className = 'flower-icon ' + st; announcePresence(); }
+function changeMyStatus(st) {
+    currentUser.status = st;
+    updateMyProfileUI();
+    announcePresence();
+}
 
 const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 function playSound(type) {
@@ -2057,8 +2533,8 @@ window.onload = async () => {
     await initIndexedDB();
     await restoreAppearanceSettings();
     initPngSmileys();
+    setupCropCanvasInteractions();
 
-    // Сначала проверяем изолированную сессию этой конкретной вкладки, а если её нет — общую
     const savedTab = sessionStorage.getItem(STORAGE_KEYS.TAB_SESSION) || localStorage.getItem(STORAGE_KEYS.SESSION_FALLBACK);
     if (savedTab) {
         try {
